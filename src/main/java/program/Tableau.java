@@ -9,6 +9,7 @@ public class Tableau {
     private int episodeId;
     private String title;
     private String subTitle;
+    private String description;
     private Calendar startTime;
     private Calendar endTime;
     private int programId;
@@ -44,6 +45,14 @@ public class Tableau {
 
     public void setSubTitle(String subTitle) {
         this.subTitle = subTitle;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Calendar getStartTime() {
@@ -108,5 +117,23 @@ public class Tableau {
 
     public void setImgUrlTemplate(String imgUrlTemplate) {
         this.imgUrlTemplate = imgUrlTemplate;
+    }
+
+    @Override
+    public String toString() {
+        return "Tableau{" +
+                "episodeId=" + episodeId +
+                ",\n title='" + title + '\'' +
+                ",\n subTitle='" + subTitle + '\'' +
+                ",\n description='" + description + '\'' +
+                ",\n startTime=" + startTime.getTime() +
+                ",\n endTime=" + endTime.getTime() +
+                ",\n programId=" + programId +
+                ",\n programName='" + programName + '\'' +
+                ",\n channelId=" + channelId +
+                ",\n channelName='" + channelName + '\'' +
+                ",\n imgUrl='" + imgUrl + '\'' +
+                ",\n imgUrlTemplate='" + imgUrlTemplate + '\'' +
+                "\n}";
     }
 }

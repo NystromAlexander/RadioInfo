@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Alexander Nyström(dv15anm) on 20/12/2016.
@@ -103,7 +105,12 @@ public class ChannelParser {
     public static void main (String[] args) {
         ChannelParser parser = new ChannelParser();
         ArrayList<Channel> channels = parser.parseChannelApi("http://api.sr.se/api/v2/channels");
-
+        Calendar rightNow = Calendar.getInstance();
+        Calendar yesterday = Calendar.getInstance();
+        yesterday.add(Calendar.DAY_OF_YEAR,-1);
+        System.out.println(rightNow.get(Calendar.YEAR)+"-"+rightNow.get(Calendar.MONTH)+"-"+rightNow.get(Calendar.DATE));
+        System.out.println(yesterday.get(Calendar.YEAR)+"-"+yesterday.get(Calendar.MONTH)+"-"+yesterday.get(Calendar.DATE));
+        System.out.println(rightNow.getTime());
         for (Channel channel: channels
              ) {
             System.out.println(channel);
