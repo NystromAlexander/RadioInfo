@@ -8,6 +8,7 @@ public class Channel {
     private int id;
     private String name;
     private String imgUrl;
+    private String imgTemplateUrl;
     private String color;
     private String tagLine;
     private String siteUrl;
@@ -52,6 +53,14 @@ public class Channel {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public String getImgTemplateUrl() {
+        return imgTemplateUrl;
+    }
+
+    public void setImgTemplateUrl(String imgTemplateUrl) {
+        this.imgTemplateUrl = imgTemplateUrl;
     }
 
     public String getColor() {
@@ -108,5 +117,23 @@ public class Channel {
 
     public void setChannelType(String channelType) {
         this.channelType = channelType;
+    }
+
+    @Override
+    public String toString() {
+        return "Channel{" +
+                "id=" + id +
+                ",\n name='" + name + '\'' +
+                ",\n imgUrl='" + imgUrl + '\'' +
+                ",\n imgTemplateUrl='" + imgTemplateUrl + '\'' +
+                ",\n color='" + color + '\'' +
+                ",\n tagLine='" + tagLine + '\'' +
+                ",\n siteUrl='" + siteUrl + '\'' +
+                ",\n liveUrl='" + liveUrl + '\'' +
+                ",\n liveStartKey='" + liveStartKey + '\'' +
+                ",\n scheduleUrl='" + scheduleUrl + '\'' +
+                ",\n channelType='" + channelType + '\'' +
+                ",\n tableau=" + tableau +
+                "}\n";
     }
 }
