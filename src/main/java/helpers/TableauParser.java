@@ -15,30 +15,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Alexander Nyström(dv15anm) on 20/12/2016.
  */
-public class TableauParser {
+public class TableauParser implements Runnable{
 
-    private DocumentBuilder parser;
-    private XPath path;
+    private List<URL> urls;
+    private List<Tableau> tableaus;
 
 
     public TableauParser() {
-
-        DocumentBuilderFactory dbfactory =
-                DocumentBuilderFactory.newInstance();
-        try {
-            parser = dbfactory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        }
-        XPathFactory xpfactory = XPathFactory.newInstance();
-        path = xpfactory.newXPath();
+        tableaus = Collections.synchronizedList(new ArrayList<Tableau>());
+        urls = Collections.synchronizedList(new ArrayList<URL>());
     }
 
     /**
@@ -48,53 +39,40 @@ public class TableauParser {
      * @param apiUrl url to the channel api
      * @return List with all channels that was parsed
      */
-    public ArrayList<Tableau> parseTableauApi(String apiUrl) {
-        ArrayList<Tableau> tableaus = new ArrayList<Tableau>();
-        Document todayDoc;
-        Document ydayDoc;
-        Document tomDoc;
+    public List<Tableau> parseTableauApi(String apiUrl) {
+
         try {
-            URL yesterday = new URL(apiUrl+getYesterday());
-            URL tomorrow = new URL(apiUrl+getTomorrow());
-            URL today = new URL(apiUrl);
-            System.out.println(yesterday+"\n"+today+"\n"+tomorrow);
-            InputStream todayInput = today.openStream();
-            ydayDoc = parser.parse(yesterday.openStream());
-            tableaus = buildTableau(tableaus,ydayDoc);
-            while ((yesterday = getNextPage(ydayDoc)) != null) {
-                ydayDoc = parser.parse(yesterday.openStream());
-                tableaus = buildTableau(tableaus, ydayDoc);
+            urls.add(new URL(apiUrl + getYesterday()));
+            urls.add(new URL(apiUrl));
+            urls.add(new URL(apiUrl + getTomorrow()));
+
+            Thread[] threads = new Thread[3];
+            for (int i = 0; i < 3; i++){
+                threads[i] = new Thread(this);
+                threads[i].start();
             }
-            todayDoc = parser.parse(todayInput);
-            tableaus = buildTableau(tableaus,todayDoc);
-            while ((today = getNextPage(todayDoc)) != null) {
-                todayDoc = parser.parse(today.openStream());
-                tableaus = buildTableau(tableaus, todayDoc);
+
+            for (int i = 0; i < 3; i++){
+                threads[i].join();
             }
-            tomDoc = parser.parse(tomorrow.openStream());
-            tableaus = buildTableau(tableaus,tomDoc);
-            while ((tomorrow = getNextPage(tomDoc)) != null) {
-                tomDoc = parser.parse(tomorrow.openStream());
-                tableaus = buildTableau(tableaus, tomDoc);
-            }
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        tableaus.sort(Comparator.comparing(Tableau::getStartTime));
         return tableaus;
     }
 
-    /**
+
+        /**
      * Create a channel object for each channel found in the parsed document
-     * @param tableaus list to put all the channels in
+     * @param path path to traverse the parsed tree
      * @param doc the parsed document
      * @return list with channels
      */
-    private ArrayList<Tableau> buildTableau(ArrayList<Tableau> tableaus, Document doc) {
+    private void buildTableau(XPath path, Document doc) {
         try {
             int episodeCount = Integer.parseInt(path.evaluate(
                     "count(/sr/schedule/scheduledepisode)", doc));
@@ -162,7 +140,38 @@ public class TableauParser {
         } catch (XPathExpressionException e) {
             e.printStackTrace();
         }
-        return tableaus;
+    }
+
+    /**
+     * Will parse each page for each url
+     */
+    public void run() {
+        DocumentBuilder parser;
+        XPath path;
+        Document doc;
+        URL url = urls.get(0);
+        urls.remove(url);
+        try {
+            System.out.println("url: "+url);
+            DocumentBuilderFactory dbfactory =
+                    DocumentBuilderFactory.newInstance();
+            parser = dbfactory.newDocumentBuilder();
+            XPathFactory xpfactory = XPathFactory.newInstance();
+            path = xpfactory.newXPath();
+
+            doc = parser.parse(url.openStream());
+            buildTableau(path, doc);
+            while ((url = getNextPage(path, doc)) != null) {
+                doc = parser.parse(url.openStream());
+                buildTableau(path, doc);
+            }
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -206,7 +215,13 @@ public class TableauParser {
         return to;
     }
 
-    private URL getNextPage(Document doc) {
+    /**
+     * Gets the next page from the parsed document
+     * @param path path to treverse the tree
+     * @param doc the document with the parsed xml
+     * @return the url to the next xml page
+     */
+    private URL getNextPage(XPath path, Document doc) {
         try {
             String url = path.evaluate("/sr/pagination/nextpage",doc);
 //            System.out.println("Next page: "+url);
@@ -223,7 +238,7 @@ public class TableauParser {
 
     public static void main (String[] args) {
         TableauParser parser = new TableauParser();
-        ArrayList<Tableau> tableaus = parser.parseTableauApi("http://api.sr.se/api/v2/scheduledepisodes?channelid=164");
+        List<Tableau> tableaus = parser.parseTableauApi("http://api.sr.se/api/v2/scheduledepisodes?channelid=164");
 
         for (Tableau tableau: tableaus
                 ) {
