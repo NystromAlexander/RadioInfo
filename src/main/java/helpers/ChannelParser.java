@@ -1,9 +1,14 @@
 package helpers;
 
+import gui.InfoWindow;
+import gui.MainWindow;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import program.Channel;
+import program.Tableau;
+import program.Updater;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,8 +30,7 @@ import java.util.concurrent.TimeUnit;
 public class ChannelParser {
     private DocumentBuilder parser;
     private XPath path;
-
-
+    private String find;
     public ChannelParser() {
 
         DocumentBuilderFactory dbfactory =
@@ -47,16 +52,19 @@ public class ChannelParser {
      * @return List with all channels that was parsed
      */
     public ArrayList<Channel> parseChannelApi(String apiUrl) {
-        ArrayList<Channel> channels = new ArrayList<Channel>();
+        ArrayList<Channel> channels = new ArrayList<>();
         Document doc;
+
         try {
-            URL urlObject = new URL(apiUrl);
-            InputStream input = urlObject.openStream();
+            URL url = new URL(apiUrl);
+            InputStream input = url.openStream();
+            find = url.toString();
             doc = parser.parse(input);
-            if (doc != null) {
+            buildChannels(channels,doc);
+            while ((url = getNextPage(doc)) != null) {
+                find = url.toString();
+                doc = parser.parse(url.openStream());
                 buildChannels(channels,doc);
-            } else {
-                System.out.println("Could not parse: "+ input);
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -67,6 +75,26 @@ public class ChannelParser {
         }
 
         return channels;
+    }
+
+    /**
+     * Gets the next page from the parsed document
+     * @param doc the document with the parsed xml
+     * @return the url to the next xml page
+     */
+    private URL getNextPage(Document doc) {
+        try {
+            String url = path.evaluate("/sr/pagination/nextpage",doc);
+//            System.out.println("Next page: "+url);
+            if (url.compareTo("") != 0){
+                return new URL(url);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -103,18 +131,48 @@ public class ChannelParser {
     }
 
     public static void main (String[] args) {
-        ChannelParser parser = new ChannelParser();
-        ArrayList<Channel> channels = parser.parseChannelApi("http://api.sr.se/api/v2/channels");
-        Calendar rightNow = Calendar.getInstance();
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DAY_OF_YEAR,-1);
-        System.out.println(rightNow.get(Calendar.YEAR)+"-"+rightNow.get(Calendar.MONTH)+"-"+rightNow.get(Calendar.DATE));
-        System.out.println(yesterday.get(Calendar.YEAR)+"-"+yesterday.get(Calendar.MONTH)+"-"+yesterday.get(Calendar.DATE));
-        System.out.println(rightNow.getTime());
-        for (Channel channel: channels
-             ) {
-            System.out.println(channel);
-
+//        ChannelParser parser = new ChannelParser();
+//        ArrayList<Channel> channels = parser.parseChannelApi("http://api.sr.se/api/v2/channels");
+//        TableauParser tableauParser = new TableauParser();
+//        List<Tableau> tableaus = tableauParser.parseTableauApi("http://api.sr.se/api/v2/scheduledepisodes?channelid=164");
+        Updater updater = new Updater();
+        List<Channel> channels = updater.update();
+        InfoWindow start = new InfoWindow();
+        InfoWindow srE = new InfoWindow();
+        InfoWindow p4 = new InfoWindow();
+        for (Channel channel: channels) {
+            if (channel.getName().startsWith("P4")) {
+//                System.out.println("P4: "+ channel.getName());
+                p4.createTab(channel);
+            } else if (channel.getName().contains("SR Extra")) {
+//                System.out.println("SR Extra "+ channel.getName());
+                srE.createTab(channel);
+            } else {
+                start.createTab(channel);
+            }
         }
+        JTabbedPane startPanel = start.buildTabbs();
+        JTabbedPane p4Panel = p4.buildTabbs();
+        JTabbedPane srEPanel = srE.buildTabbs();
+        MainWindow window = new MainWindow(startPanel,p4Panel,srEPanel);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                window.setUpGUI();
+            }
+        });
+//        window.setVisible(true);
+
+//        Calendar rightNow = Calendar.getInstance();
+//        Calendar yesterday = Calendar.getInstance();
+//        yesterday.add(Calendar.DAY_OF_YEAR,-1);
+//        System.out.println(rightNow.get(Calendar.YEAR)+"-"+rightNow.get(Calendar.MONTH)+"-"+rightNow.get(Calendar.DATE));
+//        System.out.println(yesterday.get(Calendar.YEAR)+"-"+yesterday.get(Calendar.MONTH)+"-"+yesterday.get(Calendar.DATE));
+//        System.out.println(rightNow.getTime());
+//        for (Channel channel: channels
+//             ) {
+//            System.out.println(channel);
+//
+//        }
     }
 }

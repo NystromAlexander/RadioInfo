@@ -1,5 +1,7 @@
 package program;
 
+import java.util.List;
+
 /**
  * Created by Alexander Nyström(dv15anm) on 20/12/2016.
  */
@@ -17,17 +19,17 @@ public class Channel {
     private String scheduleUrl;
     private String channelType;
 
-    private Tableau tableau;
+    private List<Tableau> tableau;
 
     public Channel() {
 
     }
 
-    public void setTableau(Tableau tableau) {
+    public void setTableau(List<Tableau> tableau) {
         this.tableau = tableau;
     }
 
-    public Tableau getTableau() {
+    public List<Tableau> getTableau() {
         return tableau;
     }
 

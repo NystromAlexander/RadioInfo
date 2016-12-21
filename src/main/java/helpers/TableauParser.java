@@ -152,7 +152,6 @@ public class TableauParser implements Runnable{
         URL url = urls.get(0);
         urls.remove(url);
         try {
-            System.out.println("url: "+url);
             DocumentBuilderFactory dbfactory =
                     DocumentBuilderFactory.newInstance();
             parser = dbfactory.newDocumentBuilder();
@@ -194,7 +193,7 @@ public class TableauParser implements Runnable{
      */
     private String getYesterday() {
         Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DAY_OF_YEAR,-1);
+        yesterday.add(Calendar.DATE,-1);
         String yDay = "&date="+ yesterday.get(Calendar.YEAR) + "-" +
                 yesterday.get(Calendar.MONTH) + "-" +
                 yesterday.get(Calendar.DATE);
@@ -208,7 +207,7 @@ public class TableauParser implements Runnable{
      */
     private String getTomorrow(){
         Calendar tomorrow = Calendar.getInstance();
-        tomorrow.add(Calendar.DAY_OF_YEAR,1);
+        tomorrow.add(Calendar.DATE,1);
         String to = "&date=" + tomorrow.get(Calendar.YEAR) + "-" +
                 tomorrow.get(Calendar.MONTH) + "-" +
                 tomorrow.get(Calendar.DATE);
