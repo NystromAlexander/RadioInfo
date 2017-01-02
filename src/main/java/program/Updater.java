@@ -1,8 +1,10 @@
 package program;
 
+import gui.InfoWindow;
 import helpers.ChannelParser;
 import helpers.TableauParser;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +29,7 @@ public class Updater implements Runnable{
         channels = channelParser.parseChannelApi(channelAPI);
     }
 
-    public List<Channel> update() {
+    public ArrayList<JTabbedPane> update() {
         threadAccess.addAll(channels);
         Thread[] threads = new Thread[channels.size()];
         for (int i = 0; i < channels.size(); i++) {
@@ -41,12 +43,36 @@ public class Updater implements Runnable{
                 e.printStackTrace();
             }
         }
-        return finished;
+        return createPanels();
+    }
+
+    private ArrayList<JTabbedPane> createPanels(){
+        InfoWindow start = new InfoWindow();
+        InfoWindow srE = new InfoWindow();
+        InfoWindow p4 = new InfoWindow();
+        for (Channel channel: finished) {
+            if (channel.getName().startsWith("P4")) {
+                p4.createTab(channel);
+            } else if (channel.getName().contains("SR Extra")) {
+                srE.createTab(channel);
+            } else {
+                start.createTab(channel);
+            }
+        }
+        JTabbedPane startPanel = start.buildTabbs();
+        JTabbedPane p4Panel = p4.buildTabbs();
+        JTabbedPane srEPanel = srE.buildTabbs();
+
+        ArrayList<JTabbedPane> panels = new ArrayList<>();
+        panels.add(startPanel);
+        panels.add(p4Panel);
+        panels.add(srEPanel);
+        return panels;
     }
 
     public void run() {
-        Channel channel = threadAccess.get(0);
-        threadAccess.remove(channel);
+        Channel channel = threadAccess.remove(0);
+//        threadAccess.remove(channel);
         if (channel.getScheduleUrl().compareTo("" ) == 0) {
 //            System.out.println("No shedule: "+channel.getName());
         } else {

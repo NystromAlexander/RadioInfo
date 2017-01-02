@@ -136,24 +136,11 @@ public class ChannelParser {
 //        TableauParser tableauParser = new TableauParser();
 //        List<Tableau> tableaus = tableauParser.parseTableauApi("http://api.sr.se/api/v2/scheduledepisodes?channelid=164");
         Updater updater = new Updater();
-        List<Channel> channels = updater.update();
-        InfoWindow start = new InfoWindow();
-        InfoWindow srE = new InfoWindow();
-        InfoWindow p4 = new InfoWindow();
-        for (Channel channel: channels) {
-            if (channel.getName().startsWith("P4")) {
-//                System.out.println("P4: "+ channel.getName());
-                p4.createTab(channel);
-            } else if (channel.getName().contains("SR Extra")) {
-//                System.out.println("SR Extra "+ channel.getName());
-                srE.createTab(channel);
-            } else {
-                start.createTab(channel);
-            }
-        }
-        JTabbedPane startPanel = start.buildTabbs();
-        JTabbedPane p4Panel = p4.buildTabbs();
-        JTabbedPane srEPanel = srE.buildTabbs();
+        List<JTabbedPane> channels = updater.update();
+        JTabbedPane startPanel = channels.get(0);
+        JTabbedPane p4Panel = channels.get(1);
+        JTabbedPane srEPanel = channels.get(2);
+
         MainWindow window = new MainWindow(startPanel,p4Panel,srEPanel);
         SwingUtilities.invokeLater(new Runnable() {
             @Override

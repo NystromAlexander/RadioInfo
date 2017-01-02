@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -77,14 +78,13 @@ public class TableauParser implements Runnable{
             int episodeCount = Integer.parseInt(path.evaluate(
                     "count(/sr/schedule/scheduledepisode)", doc));
             Calendar rightNow = Calendar.getInstance();
-//            System.out.println("channel count: "+episodeCount);
+
             for (int i = 0; i < episodeCount; i++){
-                Tableau tableau = new Tableau();
                 Calendar startTime = DatatypeConverter.parseDateTime(
                         path.evaluate("/sr/schedule/scheduledepisode["+(i+1)+"]/" +
                                 "starttimeutc",doc));
-//                System.out.println(startTime.get(Calendar.HOUR)+":"+startTime.get(Calendar.MINUTE)+":"+startTime.get(Calendar.SECOND));
                 if (isWithinInterval(rightNow, startTime)) {
+                    Tableau tableau = new Tableau();
                     String id = path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                                     "]/episodeid", doc);
@@ -96,7 +96,7 @@ public class TableauParser implements Runnable{
                             "scheduledepisode["+(i+1)+ "]/title", doc));
 
                     tableau.setSubTitle(path.evaluate("/sr/schedule/" +
-                                    "scheduledepisode["+(i+1)+ "]" +
+                                    "scheduledepisode["+(i+1)+"]" +
                             "/subtitle", doc));
 
                     tableau.setDescription(path.evaluate(
@@ -149,15 +149,13 @@ public class TableauParser implements Runnable{
         DocumentBuilder parser;
         XPath path;
         Document doc;
-        URL url = urls.get(0);
-        urls.remove(url);
+        URL url = urls.remove(0);
         try {
             DocumentBuilderFactory dbfactory =
                     DocumentBuilderFactory.newInstance();
             parser = dbfactory.newDocumentBuilder();
             XPathFactory xpfactory = XPathFactory.newInstance();
             path = xpfactory.newXPath();
-
             doc = parser.parse(url.openStream());
             buildTableau(path, doc);
             while ((url = getNextPage(path, doc)) != null) {
@@ -194,9 +192,17 @@ public class TableauParser implements Runnable{
     private String getYesterday() {
         Calendar yesterday = Calendar.getInstance();
         yesterday.add(Calendar.DATE,-1);
-        String yDay = "&date="+ yesterday.get(Calendar.YEAR) + "-" +
-                yesterday.get(Calendar.MONTH) + "-" +
-                yesterday.get(Calendar.DATE);
+        String yDay;
+        if (yesterday.get(Calendar.MONTH) == 0) {
+            yDay = "&date="+ yesterday.get(Calendar.YEAR) + "-" +
+                    "1" + "-" +
+                    yesterday.get(Calendar.DATE);
+        } else {
+            yDay = "&date="+ yesterday.get(Calendar.YEAR) + "-" +
+                    yesterday.get(Calendar.MONTH) + "-" +
+                    yesterday.get(Calendar.DATE);
+        }
+
         return yDay;
     }
 
@@ -208,9 +214,17 @@ public class TableauParser implements Runnable{
     private String getTomorrow(){
         Calendar tomorrow = Calendar.getInstance();
         tomorrow.add(Calendar.DATE,1);
-        String to = "&date=" + tomorrow.get(Calendar.YEAR) + "-" +
-                tomorrow.get(Calendar.MONTH) + "-" +
-                tomorrow.get(Calendar.DATE);
+        String to;
+        if (tomorrow.get(Calendar.MONTH) == 0) {
+            to = "&date=" + tomorrow.get(Calendar.YEAR) + "-" +
+                    "1" + "-" +
+                    tomorrow.get(Calendar.DATE);
+        } else {
+            to = "&date=" + tomorrow.get(Calendar.YEAR) + "-" +
+                    tomorrow.get(Calendar.MONTH) + "-" +
+                    tomorrow.get(Calendar.DATE);
+        }
+
         return to;
     }
 
@@ -238,11 +252,10 @@ public class TableauParser implements Runnable{
     public static void main (String[] args) {
         TableauParser parser = new TableauParser();
         List<Tableau> tableaus = parser.parseTableauApi("http://api.sr.se/api/v2/scheduledepisodes?channelid=164");
-
-        for (Tableau tableau: tableaus
-                ) {
-            System.out.println(tableau);
-
-        }
+//        for (Tableau tableau: tableaus
+//                ) {
+//            System.out.println(tableau.getProgramName());
+//
+//        }
     }
 }

@@ -6,9 +6,10 @@ import program.Tableau;
 import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ import java.util.List;
  */
 public class InfoWindow {
 
+    private final int STARTTIME_COL = 2;
     private JPanel mainFrame;
     private ArrayList<JScrollPane> panels;
     private ArrayList<String> names;
@@ -40,22 +42,50 @@ public class InfoWindow {
         List<Tableau> tableaus = channel.getTableau();
         String[] columnNames = {"Program", "Start Tid", "Slut Tid"};
         Object[][] data;
+        JScrollPane scrollPane;
         if (tableaus != null) {
              data = new Object[tableaus.size()][3];
 //            System.out.println("Has tableau "+channel.getName());
+            int put = 0;
             for (int i = 0; i < tableaus.size(); i++) {
 //                System.out.println("Adding "+tableaus.get(i).getProgramName()+" "+tableaus.get(i).getStartTime().getTime()+" "+tableaus.get(i).getEndTime().getTime());
-                data[i][0] = tableaus.get(i).getProgramName();
-                data[i][1] = tableaus.get(i).getStartTime().getTime();
-                data[i][2] = tableaus.get(i).getEndTime().getTime();
+                if (tableaus.get(i).getProgramName().compareTo("") != 0) {
+                    data[put][0] = tableaus.get(i).getProgramName();
+                    data[put][1] = tableaus.get(i).getStartTime().getTime();
+                    data[put][2] = tableaus.get(i).getEndTime().getTime();
+                } else {
+                    data[put][0] = "Ingen beskrivning tillgänglig";
+                    data[put][1] = tableaus.get(i).getStartTime().getTime();
+                    data[put][2] = tableaus.get(i).getEndTime().getTime();
+                }
+                put++;
             }
-        } else {
-            data = new Object[1][3];
-        }
-        JTable table = new JTable(data,columnNames);
-        table.setFillsViewportHeight(true);
+            JTable table = new JTable(data,columnNames);
+            table.setFillsViewportHeight(true);
+            table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table,Object value,boolean isSelected,boolean hasFocus,int row,int column) {
+                    super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        JScrollPane scrollPane = new JScrollPane(table);
+                    Date start = (Date)table.getModel().getValueAt(row, STARTTIME_COL);
+                    if (start.compareTo(Calendar.getInstance().getTime()) < 0) {
+                        setBackground(Color.LIGHT_GRAY);
+                    } else {
+                        setBackground(table.getBackground());
+                        setForeground(table.getForeground());
+                    }
+                    return this;
+                }
+            });
+            scrollPane = new JScrollPane(table);
+        } else {
+            JLabel noTableau = new JLabel("<html><div " +
+                    "\"style=\"margin:30px\"> <h1 style=" +
+                    "\"text-align:center\">Ingen tablå tillgänglig</h1>" +
+                    "</div></html>");
+            scrollPane = new JScrollPane(noTableau);
+        }
+
         names.add(channel.getName());
         panels.add(scrollPane);
     }
