@@ -30,6 +30,7 @@ public class Updater implements Runnable{
     }
 
     public ArrayList<JTabbedPane> update() {
+        finished.clear();
         threadAccess.addAll(channels);
         Thread[] threads = new Thread[channels.size()];
         for (int i = 0; i < channels.size(); i++) {

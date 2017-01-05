@@ -45,11 +45,9 @@ public class MenuBar {
         JMenu p4Menu = new JMenu("P4");
         JMenuItem show = new JMenuItem("Visa tablå");
         show.addActionListener(e -> {
-            mainWindow.getMainFrame().remove(mainWindow.getCurrentPanel());
-            mainWindow.setCurrentPanel(mainWindow.getP4Panel());
-            mainWindow.getP4Panel().setVisible(true);
+//            mainWindow.setCurrentPanel(mainWindow.getP4Panel());
             mainWindow.setCurrentView(CurrentView.P4);
-            mainWindow.getMainFrame().pack();
+            mainWindow.updateView();
         });
         p4Menu.add(show);
         return p4Menu;
@@ -59,11 +57,9 @@ public class MenuBar {
         JMenu start = new JMenu("Blandat");
         JMenuItem show = new JMenuItem("Visa tablå");
         show.addActionListener(e -> {
-            mainWindow.getMainFrame().remove(mainWindow.getCurrentPanel());
-            mainWindow.setCurrentPanel(mainWindow.getStartPanel());
-            mainWindow.getStartPanel().setVisible(true);
+//            mainWindow.setCurrentPanel(mainWindow.getStartPanel());
             mainWindow.setCurrentView(CurrentView.MAIN);
-            mainWindow.getMainFrame().pack();
+            mainWindow.updateView();
         });
         start.add(show);
         return start;
@@ -73,11 +69,9 @@ public class MenuBar {
         JMenu SRExtra = new JMenu("SR Extra");
         JMenuItem show = new JMenuItem("Visa tablå");
         show.addActionListener(e -> {
-            mainWindow.getMainFrame().remove(mainWindow.getCurrentPanel());
-            mainWindow.setCurrentPanel(mainWindow.getSrExtraPanel());
-            mainWindow.getSrExtraPanel().setVisible(true);
+//            mainWindow.setCurrentPanel(mainWindow.getSrExtraPanel());
             mainWindow.setCurrentView(CurrentView.SREXTRA);
-            mainWindow.getMainFrame().pack();
+            mainWindow.updateView();
         });
         SRExtra.add(show);
         return SRExtra;

@@ -78,7 +78,6 @@ public class TableauParser implements Runnable{
             int episodeCount = Integer.parseInt(path.evaluate(
                     "count(/sr/schedule/scheduledepisode)", doc));
             Calendar rightNow = Calendar.getInstance();
-
             for (int i = 0; i < episodeCount; i++){
                 Calendar startTime = DatatypeConverter.parseDateTime(
                         path.evaluate("/sr/schedule/scheduledepisode["+(i+1)+"]/" +

@@ -34,30 +34,7 @@ public class UpdateButtonListener implements ActionListener {
 
             public void done() {
                 System.out.println("Done");
-                switch (mainWindow.getCurrentView()) {
-                    case MAIN:
-                        mainWindow.getP4Panel().setVisible(false);
-                        mainWindow.getSrExtraPanel().setVisible(false);
-                        mainWindow.getMainFrame().add(mainWindow.getStartPanel());
-                        mainWindow.getStartPanel().setVisible(true);
-                        mainWindow.getMainFrame().pack();
-                        mainWindow.getMainFrame().repaint();
-                        break;
-                    case P4:
-                        mainWindow.getStartPanel().setVisible(false);
-                        mainWindow.getSrExtraPanel().setVisible(false);
-                        mainWindow.getMainFrame().add(mainWindow.getP4Panel());
-                        mainWindow.getP4Panel().setVisible(true);
-                        mainWindow.getMainFrame().pack();
-                        break;
-                    case SREXTRA:
-                        mainWindow.getStartPanel().setVisible(false);
-                        mainWindow.getP4Panel().setVisible(false);
-                        mainWindow.getMainFrame().add(mainWindow.getSrExtraPanel());
-                        mainWindow.getSrExtraPanel().setVisible(true);
-                        mainWindow.getMainFrame().pack();
-                        break;
-                }
+                mainWindow.updateView();
             }
         };
         aWorker.run();
