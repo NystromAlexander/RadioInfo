@@ -15,6 +15,10 @@ import java.util.concurrent.TimeUnit;
  * Created by Alexander Nyström(dv15anm) on 21/12/2016.
  */
 public class MainWindow {
+
+    private static int START = 0;
+    private static int P4IND = 1;
+    private static int SRE = 2;
     private JFrame mainFrame;
     private JTabbedPane p4Panel;
     private JTabbedPane srExtraPanel;
@@ -23,75 +27,114 @@ public class MainWindow {
     private JTabbedPane currentPanel;
     private Updater updater;
     private JLabel updateTime;
+    private ScheduledExecutorService runUpdate;
 
-    public MainWindow(JTabbedPane startPanel, JTabbedPane p4Panel, JTabbedPane srExtraPanel) {
+    /**
+     * The main graphical window containing the tableaus for the channels
+     */
+    public MainWindow() {
         mainFrame = new JFrame("Radio Info");
-        this.startPanel = startPanel;
-        this.p4Panel = p4Panel;
-        this.srExtraPanel = srExtraPanel;
-        updateTime = new JLabel("Senast updaterad: "+Calendar.getInstance().getTime().toString());
+        mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        updateTime = new JLabel("Senast updaterad: "+Calendar.
+                getInstance().getTime().toString());
         mainFrame.add(updateTime,BorderLayout.SOUTH);
         updater = new Updater();
-        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-        ses.scheduleAtFixedRate(this::updateData, 1, 1, TimeUnit.HOURS);
+        runUpdate = Executors.newSingleThreadScheduledExecutor();
+        setUpGUI();
     }
 
-    private void addJMenuBar(){
+    /**
+     * Sets up the initial gui and starts the scheduled update which will update
+     * once every hour.
+     */
+    public void setUpGUI() {
+        mainFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         MenuBar menu = new MenuBar(this);
         mainFrame.setJMenuBar(menu.getMenuBar());
-    }
-
-    public void setUpGUI() {
-        mainFrame.add(startPanel, BorderLayout.CENTER);
-        startPanel.setVisible(true);
-        addJMenuBar();
-        mainFrame.pack();
-        mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        currentView = CurrentView.MAIN;
-        currentPanel = startPanel;
         mainFrame.setVisible(true);
+        mainFrame.pack();
+        currentView = CurrentView.LOAD;
+        runUpdate.scheduleAtFixedRate(this::updateData, 0, 1,
+                TimeUnit.HOURS);
     }
 
+    /**
+     *
+     * @return the panel containing the schedule for P4
+     */
     public JTabbedPane getP4Panel() {
         return p4Panel;
     }
 
+    /**
+     *
+     * @return The panel containing the schedule for SR Extra
+     */
     public JTabbedPane getSrExtraPanel() {
         return srExtraPanel;
     }
 
+    /**
+     *
+     * @return The panel containing the schedule for mixed channels
+     */
     public JTabbedPane getStartPanel() {
         return startPanel;
     }
 
+    /**
+     * Sets the panel with schedules for P4
+     * @param p4Panel panel with schedule for p4
+     */
     public void setP4Panel(JTabbedPane p4Panel) {
         this.p4Panel = p4Panel;
     }
 
+    /**
+     * Sets the panel with schedule for SR Extra channels
+     * @param srExtraPanel panel with schedule for SR Extra channels
+     */
     public void setSrExtraPanel(JTabbedPane srExtraPanel) {
         this.srExtraPanel = srExtraPanel;
     }
 
+    /**
+     * Set the panel with mixed channels
+     * @param startPanel panel with schedule for mixed channels
+     */
     public void setStartPanel(JTabbedPane startPanel) {
         this.startPanel = startPanel;
     }
 
-    public JFrame getMainFrame() {
-        return mainFrame;
-    }
-
-    public CurrentView getCurrentView() {
-        return currentView;
-    }
-
+    /**
+     * Set the current view for the window
+     * @param currentView the view that now is the current one
+     */
     public void setCurrentView(CurrentView currentView) {
         this.currentView = currentView;
     }
 
-    public JTabbedPane getCurrentPanel() {
-        return currentPanel;
+    /**
+     * Change the text of updateTime to the given string so that it displayes
+     * the time for the last update
+     * @param updateTime string saying when the schedules were last updated
+     */
+    public void setUpdateTime(String updateTime) {
+        this.updateTime.setText(updateTime);
     }
 
+    /**
+     *
+     * @return the main frame
+     */
+    public JFrame getMainFrame() {
+        return mainFrame;
+    }
+
+    /**
+     * Set a new current panel and make all panels not visible.
+     * @param currentPanel the new panel
+     */
     private void setCurrentPanel(JTabbedPane currentPanel) {
         this.currentPanel = currentPanel;
         startPanel.setVisible(false);
@@ -100,6 +143,9 @@ public class MainWindow {
         mainFrame.add(currentPanel);
     }
 
+    /**
+     * updates the view depending on what currentView is set to
+     */
     public void updateView() {
         switch (currentView) {
             case MAIN:
@@ -107,29 +153,60 @@ public class MainWindow {
                 setCurrentPanel(startPanel);
                 startPanel.setVisible(true);
                 mainFrame.pack();
+                mainFrame.revalidate();
+                mainFrame.repaint();
                 break;
             case P4:
                 mainFrame.remove(currentPanel);
                 setCurrentPanel(p4Panel);
                 p4Panel.setVisible(true);
                 mainFrame.pack();
+                mainFrame.revalidate();
+                mainFrame.repaint();
                 break;
             case SREXTRA:
                 mainFrame.remove(currentPanel);
                 setCurrentPanel(srExtraPanel);
                 srExtraPanel.setVisible(true);
                 mainFrame.pack();
+                mainFrame.revalidate();
+                mainFrame.repaint();
+                break;
+            case LOAD:
+                currentView = CurrentView.MAIN;
+                setCurrentPanel(startPanel);
+                startPanel.setVisible(true);
+                mainFrame.pack();
+                mainFrame.revalidate();
+                mainFrame.repaint();
+                mainFrame.setCursor(Cursor.getPredefinedCursor(
+                        Cursor.DEFAULT_CURSOR));
                 break;
         }
     }
 
+    /**
+     * Updates the schedules will be called once every hour.
+     */
     private void updateData(){
-        updateTime.setText("Senast updaterad: "+Calendar.getInstance().getTime().toString());
-        System.out.println("Updating at: "+ Calendar.getInstance().getTime());
-        ArrayList<JTabbedPane> panes = updater.update();
-        setStartPanel(panes.get(0));
-        setP4Panel(panes.get(1));
-        setSrExtraPanel(panes.get(2));
-        updateView();
+        //Set the time and date for the update
+        updateTime.setText("Senast updaterad: "+Calendar.getInstance().
+                getTime().toString());
+        /*Create a swing worker to do the hard job while the gui
+             can remain active*/
+        SwingWorker aWorker = new SwingWorker() {
+            public Object doInBackground() {
+                ArrayList<JTabbedPane> panes = updater.update();
+                setStartPanel(panes.get(START));
+                setP4Panel(panes.get(P4IND));
+                setSrExtraPanel(panes.get(SRE));
+                return null;
+            }
+
+            public void done() {
+                updateView();
+            }
+        };
+        aWorker.run();
     }
 }

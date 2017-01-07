@@ -6,5 +6,6 @@ package helpers;
 public enum  CurrentView {
     P4,
     SREXTRA,
-    MAIN
+    MAIN,
+    LOAD
 }

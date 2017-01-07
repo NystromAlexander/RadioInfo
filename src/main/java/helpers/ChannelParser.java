@@ -1,14 +1,9 @@
 package helpers;
 
-import gui.InfoWindow;
-import gui.MainWindow;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import program.Channel;
-import program.Tableau;
-import program.Updater;
 
-import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,9 +15,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Alexander Nyström(dv15anm) on 20/12/2016.
@@ -85,7 +77,6 @@ public class ChannelParser {
     private URL getNextPage(Document doc) {
         try {
             String url = path.evaluate("/sr/pagination/nextpage",doc);
-//            System.out.println("Next page: "+url);
             if (url.compareTo("") != 0){
                 return new URL(url);
             }
@@ -106,21 +97,43 @@ public class ChannelParser {
     private ArrayList<Channel> buildChannels(ArrayList<Channel> channels, Document doc) {
 
         try {
-            int channelCount = Integer.parseInt(path.evaluate("count(/sr/channels/channel)", doc));
+            int channelCount = Integer.parseInt(path.evaluate(
+                    "count(/sr/channels/channel)", doc));
             for (int i = 0; i < channelCount; i++){
                 Channel channel = new Channel();
 
-                channel.setId(Integer.parseInt(path.evaluate("/sr/channels/channel["+(i+1)+"]/@id", doc)));
-                channel.setName(path.evaluate("/sr/channels/channel["+(i+1)+"]/@name", doc));
-                channel.setImgUrl(path.evaluate("/sr/channels/channel["+(i+1)+"]/image", doc));
-                channel.setImgTemplateUrl(path.evaluate("/sr/channels/channel["+(i+1)+"]/imagetemplate", doc));
-                channel.setColor(path.evaluate("/sr/channels/channel["+(i+1)+"]/color", doc));
-                channel.setTagLine(path.evaluate("/sr/channels/channel["+(i+1)+"]/tagline", doc));
-                channel.setSiteUrl(path.evaluate("/sr/channels/channel["+(i+1)+"]/siteurl", doc));
-                channel.setLiveUrl(path.evaluate("/sr/channels/channel["+(i+1)+"]/liveaudio/url", doc));
-                channel.setLiveStartKey(path.evaluate("/sr/channels/channel["+(i+1)+"]/liveaudio/statkey", doc));
-                channel.setScheduleUrl(path.evaluate("/sr/channels/channel["+(i+1)+"]/scheduleurl", doc));
-                channel.setChannelType(path.evaluate("/sr/channels/channel["+(i+1)+"]/channeltype", doc));
+                channel.setId(Integer.parseInt(path.evaluate(
+                        "/sr/channels/channel["+(i+1)+"]/@id", doc)));
+
+                channel.setName(path.evaluate("/sr/channels/channel["+
+                        (i+1)+"]/@name", doc));
+
+                channel.setImgUrl(path.evaluate("/sr/channels/channel["
+                        +(i+1)+"]/image", doc));
+
+                channel.setImgTemplateUrl(path.evaluate("/sr/" +
+                        "channels/channel["+(i+1)+"]/imagetemplate", doc));
+
+                channel.setColor(path.evaluate("/sr/channels/channel["+
+                        (i+1)+"]/color", doc));
+
+                channel.setTagLine(path.evaluate("/sr/channels/" +
+                        "channel["+(i+1)+"]/tagline", doc));
+
+                channel.setSiteUrl(path.evaluate("/sr/channels/" +
+                        "channel["+(i+1)+"]/siteurl", doc));
+
+                channel.setLiveUrl(path.evaluate("/sr/channels/" +
+                        "channel["+(i+1)+"]/liveaudio/url", doc));
+
+                channel.setLiveStartKey(path.evaluate("/sr/channels/" +
+                        "channel["+(i+1)+"]/liveaudio/statkey", doc));
+
+                channel.setScheduleUrl(path.evaluate("/sr/channels/" +
+                        "channel["+(i+1)+"]/scheduleurl", doc));
+
+                channel.setChannelType(path.evaluate("/sr/channels/" +
+                        "channel["+(i+1)+"]/channeltype", doc));
 
                 channels.add(channel);
             }
@@ -128,38 +141,5 @@ public class ChannelParser {
             e.printStackTrace();
         }
         return channels;
-    }
-
-    public static void main (String[] args) {
-//        ChannelParser parser = new ChannelParser();
-//        ArrayList<Channel> channels = parser.parseChannelApi("http://api.sr.se/api/v2/channels");
-//        TableauParser tableauParser = new TableauParser();
-//        List<Tableau> tableaus = tableauParser.parseTableauApi("http://api.sr.se/api/v2/scheduledepisodes?channelid=164");
-        Updater updater = new Updater();
-        List<JTabbedPane> channels = updater.update();
-        JTabbedPane startPanel = channels.get(0);
-        JTabbedPane p4Panel = channels.get(1);
-        JTabbedPane srEPanel = channels.get(2);
-
-        MainWindow window = new MainWindow(startPanel,p4Panel,srEPanel);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                window.setUpGUI();
-            }
-        });
-//        window.setVisible(true);
-
-//        Calendar rightNow = Calendar.getInstance();
-//        Calendar yesterday = Calendar.getInstance();
-//        yesterday.add(Calendar.DAY_OF_YEAR,-1);
-//        System.out.println(rightNow.get(Calendar.YEAR)+"-"+rightNow.get(Calendar.MONTH)+"-"+rightNow.get(Calendar.DATE));
-//        System.out.println(yesterday.get(Calendar.YEAR)+"-"+yesterday.get(Calendar.MONTH)+"-"+yesterday.get(Calendar.DATE));
-//        System.out.println(rightNow.getTime());
-//        for (Channel channel: channels
-//             ) {
-//            System.out.println(channel);
-//
-//        }
     }
 }

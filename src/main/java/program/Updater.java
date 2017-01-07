@@ -1,6 +1,6 @@
 package program;
 
-import gui.InfoWindow;
+import gui.TabBuilder;
 import helpers.ChannelParser;
 import helpers.TableauParser;
 
@@ -48,9 +48,9 @@ public class Updater implements Runnable{
     }
 
     private ArrayList<JTabbedPane> createPanels(){
-        InfoWindow start = new InfoWindow();
-        InfoWindow srE = new InfoWindow();
-        InfoWindow p4 = new InfoWindow();
+        TabBuilder start = new TabBuilder();
+        TabBuilder srE = new TabBuilder();
+        TabBuilder p4 = new TabBuilder();
         for (Channel channel: finished) {
             if (channel.getName().startsWith("P4")) {
                 p4.createTab(channel);

@@ -18,6 +18,11 @@ public class Details {
     private Tableau tableau;
     private URI channelURI;
 
+    /**
+     * Create a Details window
+     * @param tableau tableau for a channel
+     * @param channelURI URI to the channels website
+     */
     public Details(Tableau tableau, URI channelURI) {
         this.channelURI = channelURI;
         window = new JFrame("Ytterligare information");
@@ -27,17 +32,24 @@ public class Details {
         window.pack();
     }
 
+    /**
+     * Set up the window, get picture from the tableau and make a label with
+     * the given description and make a button looking like a link to open
+     * the website in a browser.
+     */
     private void setupWindow() {
         JPanel panel = new JPanel(new BorderLayout());
         Image image = null;
         JLabel picture = new JLabel();
         JLabel imageText = new JLabel();
+        //Get image associated with the show
         try {
             if (tableau.getImgUrl().compareTo("") != 0) {
                 image = ImageIO.read(new URL(tableau.getImgUrl()));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            /*Since it does not matter for the program if it was unable to
+                retrieve the image this clause is empty*/
         }
 
         if (image != null) {
@@ -45,10 +57,20 @@ public class Details {
             picture.setIcon(i);
             panel.add(picture,BorderLayout.NORTH);
         }
+
         JPanel innerPane = new JPanel(new BorderLayout());
-        imageText.setText("<html><div " +
-                "\"style=\"margin:30px\"> "+tableau.getDescription()+
-                "</div></html>");
+        //If there is a description for the show make a label with it
+        if (tableau.getDescription().compareTo("") != 0) {
+            imageText.setText("<html><div " +
+                    "\"style=\"margin:30px\"> "+tableau.getDescription()+
+                    "</div></html>");
+        } else { //say there were no descripion for the show
+            imageText.setText("<html><div " +
+                    "\"style=\"margin:30px\">Ingen beskrivning tillgänglig." +
+                    "</div></html>");
+        }
+
+        //Create a button looking like a link and that tries to open the website
         JButton webSite = new JButton("<HTML><FONT color=\"#000099\"><U>" +
                 "Gå till kannalens hemsida.</U></FONT></HTML>");
         webSite.addActionListener(e -> {
@@ -56,7 +78,8 @@ public class Details {
             if (Desktop.isDesktopSupported()) {
                 try {
                     Desktop.getDesktop().browse(channelURI);
-                } catch (IOException io) { JOptionPane.showMessageDialog(
+                } catch (IOException io) {
+                    JOptionPane.showMessageDialog(
                         null,"Could not open "+channelURI);
                 }
             }

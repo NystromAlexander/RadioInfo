@@ -13,39 +13,54 @@ public class MenuBar {
     private JMenuBar menuBar;
     private MainWindow mainWindow;
 
+    /**
+     * Create a menu bar with 4 menus
+     * @param mainWindow the main window which the menu bar belong to
+     */
     public MenuBar (MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         menuBar = new JMenuBar();
-        menuBar.add(createFileMenue());
+        menuBar.add(createFileMenu());
         menuBar.add(createStartMenu());
         menuBar.add(createP4Menu());
         menuBar.add(createSRExtraMenu());
     }
 
-    private JMenu createFileMenue() {
+    /**
+     * Create the file menu containing update and exit
+     * @return the finished menu
+     */
+    private JMenu createFileMenu() {
         JMenu fileMenu = new JMenu("Options");
         fileMenu.add(creteUpdate());
         fileMenu.add(createExit());
         return fileMenu;
     }
 
+    /**
+     * Creates the update menu item
+     * @return the update item
+     */
     private JMenuItem creteUpdate() {
         JMenuItem update = new JMenuItem("Update");
         update.addActionListener(new UpdateButtonListener(mainWindow));
         return update;
     }
 
+    /**
+     * Creates the exit item that will close the program when clicked
+     * @return exit item
+     */
     private JMenuItem createExit() {
         JMenuItem exit = new JMenuItem("Exit");
         exit.addActionListener(e -> System.exit(0));
         return exit;
     }
-
+//TODO Comment from here
     private JMenu createP4Menu() {
         JMenu p4Menu = new JMenu("P4");
         JMenuItem show = new JMenuItem("Visa tablå");
         show.addActionListener(e -> {
-//            mainWindow.setCurrentPanel(mainWindow.getP4Panel());
             mainWindow.setCurrentView(CurrentView.P4);
             mainWindow.updateView();
         });
@@ -57,7 +72,6 @@ public class MenuBar {
         JMenu start = new JMenu("Blandat");
         JMenuItem show = new JMenuItem("Visa tablå");
         show.addActionListener(e -> {
-//            mainWindow.setCurrentPanel(mainWindow.getStartPanel());
             mainWindow.setCurrentView(CurrentView.MAIN);
             mainWindow.updateView();
         });
@@ -69,7 +83,6 @@ public class MenuBar {
         JMenu SRExtra = new JMenu("SR Extra");
         JMenuItem show = new JMenuItem("Visa tablå");
         show.addActionListener(e -> {
-//            mainWindow.setCurrentPanel(mainWindow.getSrExtraPanel());
             mainWindow.setCurrentView(CurrentView.SREXTRA);
             mainWindow.updateView();
         });
