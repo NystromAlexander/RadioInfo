@@ -26,11 +26,12 @@ public class TableauParser implements Runnable{
 
     private List<URL> urls;
     private List<Tableau> tableaus;
-
+    private List<Document> documents;
 
     public TableauParser() {
         tableaus = Collections.synchronizedList(new ArrayList<Tableau>());
         urls = Collections.synchronizedList(new ArrayList<URL>());
+        documents = Collections.synchronizedList(new ArrayList<Document>());
     }
 
     /**
@@ -43,17 +44,50 @@ public class TableauParser implements Runnable{
     public List<Tableau> parseTableauApi(String apiUrl) {
 
         try {
+            URL yesterday = new URL(apiUrl + getYesterday());
+            URL tomorrow = new URL(apiUrl + getTomorrow());
             urls.add(new URL(apiUrl + getYesterday()));
             urls.add(new URL(apiUrl));
             urls.add(new URL(apiUrl + getTomorrow()));
-
+//            XPathFactory xpfactory = XPathFactory.newInstance();
+//            XPath path = xpfactory.newXPath();
+//            DocumentBuilder parser;
+//            DocumentBuilderFactory dbfactory =
+//                    DocumentBuilderFactory.newInstance();
+//            parser = dbfactory.newDocumentBuilder();
+//            documents.add(parser.parse(yesterday.openStream()));
+//            documents.add(parser.parse(new URL(apiUrl).openStream()));
+//            documents.add(parser.parse(tomorrow.openStream()));
+//            boolean work = true;
+//            int found = 0;
+//            URL url;
+//            int index = 0;
+//            while (work) {
+//                System.out.println("parsing");
+//                if ((url = getNextPage(path, documents.get(index))) != null) {
+//                     documents.add(parser.parse(url.openStream()));
+//                     index = documents.size()-1;
+//                } else {
+//                    if (found == 0) {
+//                        index = 1;
+//                        found = 1;
+//                    } else if (found == 1) {
+//                        index = 2;
+//                        found = 2;
+//                    } else {
+//                        work = false;
+//                    }
+//
+//                }
+//            }
             Thread[] threads = new Thread[3];
-            for (int i = 0; i < 3; i++){
+            for (int i = 0; i < 2; i++){
                 threads[i] = new Thread(this);
                 threads[i].start();
             }
+            run();
 
-            for (int i = 0; i < 3; i++){
+            for (int i = 0; i < 2; i++){
                 threads[i].join();
             }
 
@@ -62,6 +96,15 @@ public class TableauParser implements Runnable{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+//        catch (ParserConfigurationException e) {
+//            e.printStackTrace();
+//        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+//        catch (SAXException e) {
+//            e.printStackTrace();
+//        }
         tableaus.sort(Comparator.comparing(Tableau::getStartTime));
         return tableaus;
     }
@@ -75,6 +118,7 @@ public class TableauParser implements Runnable{
      */
     private void buildTableau(XPath path, Document doc) {
         try {
+            System.out.println("building");
             int episodeCount = Integer.parseInt(path.evaluate(
                     "count(/sr/schedule/scheduledepisode)", doc));
             Calendar rightNow = Calendar.getInstance();
@@ -147,21 +191,55 @@ public class TableauParser implements Runnable{
     public void run() {
         DocumentBuilder parser;
         XPath path;
-        Document doc;
         URL url = urls.remove(0);
         try {
+            Document doc;
+//            XPathFactory xpfactory = XPathFactory.newInstance();
+//            XPath path = xpfactory.newXPath();
+//            DocumentBuilder parser;
+//            DocumentBuilderFactory dbfactory =
+//                    DocumentBuilderFactory.newInstance();
+//            parser = dbfactory.newDocumentBuilder();
+//TODO change it so that yesterday and tomorrow gets started from outside to try and spread the work so that threads get started before
+            boolean work = true;
+            int found = 0;
+//            URL url;
+//            int index = 0;
+//            while (work) {
+//                System.out.println("parsing");
+//                if ((url = getNextPage(path, documents.get(index))) != null) {
+//                    documents.add(parser.parse(url.openStream()));
+//                    index = documents.size()-1;
+//                } else {
+//                    if (found == 0) {
+//                        index = 1;
+//                        found = 1;
+//                    } else if (found == 1) {
+//                        index = 2;
+//                        found = 2;
+//                    } else {
+//                        work = false;
+//                    }
+//
+//                }
+//            }
+
             DocumentBuilderFactory dbfactory =
                     DocumentBuilderFactory.newInstance();
             parser = dbfactory.newDocumentBuilder();
             XPathFactory xpfactory = XPathFactory.newInstance();
             path = xpfactory.newXPath();
             doc = parser.parse(url.openStream());
-            buildTableau(path, doc);
+//            while (!documents.isEmpty()) {
+//                doc = documents.remove(0);
+//                buildTableau(path, doc);
+//            }
             while ((url = getNextPage(path, doc)) != null) {
                 doc = parser.parse(url.openStream());
                 buildTableau(path, doc);
             }
-        } catch (ParserConfigurationException e) {
+        }
+        catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {
             e.printStackTrace();

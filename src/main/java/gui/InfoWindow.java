@@ -1,5 +1,6 @@
 package gui;
 
+import helpers.RowSelectionListener;
 import program.Channel;
 import program.Tableau;
 
@@ -7,6 +8,7 @@ import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -60,7 +62,16 @@ public class InfoWindow {
                 }
                 put++;
             }
-            JTable table = new JTable(data,columnNames);
+            JTable table = new JTable();
+            DefaultTableModel tableModel = new DefaultTableModel(data,columnNames) {
+
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    //all cells false
+                    return false;
+                }
+            };
+            table.setModel(tableModel);
             table.setFillsViewportHeight(true);
             table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
                 @Override
@@ -77,6 +88,10 @@ public class InfoWindow {
                     return this;
                 }
             });
+            table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            table.setColumnSelectionAllowed(false);
+            table.setRowSelectionAllowed(true);
+            table.getSelectionModel().addListSelectionListener(new RowSelectionListener(channel,table));
             scrollPane = new JScrollPane(table);
         } else {
             JLabel noTableau = new JLabel("<html><div " +
