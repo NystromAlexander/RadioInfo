@@ -78,9 +78,9 @@ public class Updater implements Runnable{
 //            System.out.println("No shedule: "+channel.getName());
         } else {
             ScheduleParser scheduleParser = new ScheduleParser();
-            List<Schedule> schedules =
+            List<ScheduleEntry> scheduleEntries =
                     scheduleParser.parseTableauApi(channel.getScheduleUrl());
-            channel.setSchedule(schedules);
+            channel.setScheduleEntry(scheduleEntries);
         }
 
         finished.add(channel);

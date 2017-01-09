@@ -2,7 +2,7 @@ package helpers;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import program.Schedule;
+import program.ScheduleEntry;
 
 import javax.swing.*;
 import javax.xml.bind.DatatypeConverter;
@@ -24,13 +24,13 @@ import java.util.concurrent.TimeUnit;
 public class ScheduleParser implements Runnable{
 
     private List<URL> urls;
-    private List<Schedule> schedules;
+    private List<ScheduleEntry> scheduleEntries;
 
     /**
-     * Parser to parse and create schedules for radio channels
+     * Parser to parse and create scheduleEntries for radio channels
      */
     public ScheduleParser() {
-        schedules = Collections.synchronizedList(new ArrayList<Schedule>());
+        scheduleEntries = Collections.synchronizedList(new ArrayList<ScheduleEntry>());
         urls = Collections.synchronizedList(new ArrayList<URL>());
     }
 
@@ -40,7 +40,7 @@ public class ScheduleParser implements Runnable{
      * @param apiUrl url to the schedule api
      * @return List with all tableau's that was parsed
      */
-    public List<Schedule> parseTableauApi(String apiUrl) {
+    public List<ScheduleEntry> parseTableauApi(String apiUrl) {
 
         try {
             //Create the urls for yesterday, today and tomorrow
@@ -65,8 +65,8 @@ public class ScheduleParser implements Runnable{
                     "were an internal error");
         }
         //Sorts the list by the start time
-        schedules.sort(Comparator.comparing(Schedule::getStartTime));
-        return schedules;
+        scheduleEntries.sort(Comparator.comparing(ScheduleEntry::getStartTime));
+        return scheduleEntries;
     }
 
      /**
@@ -85,57 +85,57 @@ public class ScheduleParser implements Runnable{
                         path.evaluate("/sr/schedule/scheduledepisode["+(i+1)+"]/" +
                                 "starttimeutc",doc));
                 if (isWithinInterval(rightNow, startTime)) {
-                    Schedule schedule = new Schedule();
+                    ScheduleEntry scheduleEntry = new ScheduleEntry();
                     String id = path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                                     "]/episodeid", doc);
                     if (id.compareTo("") != 0) {
-                        schedule.setEpisodeId(Integer.parseInt(id));
+                        scheduleEntry.setEpisodeId(Integer.parseInt(id));
                     }
 
-                    schedule.setTitle(path.evaluate("/sr/schedule/" +
+                    scheduleEntry.setTitle(path.evaluate("/sr/schedule/" +
                             "scheduledepisode["+(i+1)+ "]/title", doc));
 
-                    schedule.setSubTitle(path.evaluate("/sr/schedule/" +
+                    scheduleEntry.setSubTitle(path.evaluate("/sr/schedule/" +
                                     "scheduledepisode["+(i+1)+"]" +
                             "/subtitle", doc));
 
-                    schedule.setDescription(path.evaluate(
+                    scheduleEntry.setDescription(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                                     "]/description", doc));
 
-                    schedule.setStartTime(startTime);
+                    scheduleEntry.setStartTime(startTime);
 
-                    schedule.setEndTime(DatatypeConverter.parseDateTime(
+                    scheduleEntry.setEndTime(DatatypeConverter.parseDateTime(
                             path.evaluate("/sr/schedule/" +
                                     "scheduledepisode["+(i+1)+"]/" +
                                     "endtimeutc", doc)));
 
-                    schedule.setProgramId(Integer.parseInt(path.evaluate(
+                    scheduleEntry.setProgramId(Integer.parseInt(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/program/@id", doc)));
 
-                    schedule.setProgramName(path.evaluate(
+                    scheduleEntry.setProgramName(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/program/@name", doc));
 
-                    schedule.setChannelId(Integer.parseInt(path.evaluate(
+                    scheduleEntry.setChannelId(Integer.parseInt(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/channel/@id", doc)));
 
-                    schedule.setChannelName(path.evaluate(
+                    scheduleEntry.setChannelName(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/channel/@name", doc));
 
-                    schedule.setImgUrl(path.evaluate(
+                    scheduleEntry.setImgUrl(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/imageurl", doc));
 
-                    schedule.setImgUrlTemplate(path.evaluate(
+                    scheduleEntry.setImgUrlTemplate(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/imageurltemplate", doc));
 
-                    schedules.add(schedule);
+                    scheduleEntries.add(scheduleEntry);
                 }
             }
         } catch (XPathExpressionException e) {

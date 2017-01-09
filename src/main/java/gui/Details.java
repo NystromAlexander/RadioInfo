@@ -1,6 +1,6 @@
 package gui;
 
-import program.Schedule;
+import program.ScheduleEntry;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -15,25 +15,25 @@ import java.net.URL;
 public class Details {
 
     private JFrame window;
-    private Schedule schedule;
+    private ScheduleEntry scheduleEntry;
     private URI channelURI;
 
     /**
      * Create a Details window
-     * @param schedule schedule for a channel
+     * @param scheduleEntry scheduleEntry for a channel
      * @param channelURI URI to the channels website
      */
-    public Details(Schedule schedule, URI channelURI) {
+    public Details(ScheduleEntry scheduleEntry, URI channelURI) {
         this.channelURI = channelURI;
         window = new JFrame("Ytterligare information");
-        this.schedule = schedule;
+        this.scheduleEntry = scheduleEntry;
         setupWindow();
         window.setVisible(true);
         window.pack();
     }
 
     /**
-     * Set up the window, get picture from the schedule and make a label with
+     * Set up the window, get picture from the scheduleEntry and make a label with
      * the given description and make a button looking like a link to open
      * the website in a browser.
      */
@@ -44,8 +44,8 @@ public class Details {
         JLabel imageText = new JLabel();
         //Get image associated with the show
         try {
-            if (schedule.getImgUrl().compareTo("") != 0) {
-                image = ImageIO.read(new URL(schedule.getImgUrl()));
+            if (scheduleEntry.getImgUrl().compareTo("") != 0) {
+                image = ImageIO.read(new URL(scheduleEntry.getImgUrl()));
             }
         } catch (IOException e) {
             /*Since it does not matter for the program if it was unable to
@@ -60,9 +60,9 @@ public class Details {
 
         JPanel innerPane = new JPanel(new BorderLayout());
         //If there is a description for the show make a label with it
-        if (schedule.getDescription().compareTo("") != 0) {
+        if (scheduleEntry.getDescription().compareTo("") != 0) {
             imageText.setText("<html><div " +
-                    "\"style=\"margin:30px\"> "+ schedule.getDescription()+
+                    "\"style=\"margin:30px\"> "+ scheduleEntry.getDescription()+
                     "</div></html>");
         } else { //say there were no descripion for the show
             imageText.setText("<html><div " +

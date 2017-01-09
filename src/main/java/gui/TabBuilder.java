@@ -2,7 +2,8 @@ package gui;
 
 import helpers.RowSelectionListener;
 import program.Channel;
-import program.Schedule;
+import program.ScheduleEntry;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -36,24 +37,24 @@ public class TabBuilder {
      */
     public void createTab(Channel channel) {
         this.channel = channel;
-        List<Schedule> schedules = channel.getSchedule();
+        List<ScheduleEntry> scheduleEntries = channel.getScheduleEntry();
         String[] columnNames = {"Program", "Start Tid", "Slut Tid"};
         Object[][] data;
         JScrollPane scrollPane;
-        if (schedules != null) {
-             data = new Object[schedules.size()][3];
-            for (int i = 0; i < schedules.size(); i++) {
-                if (schedules.get(i).getProgramName().compareTo("")
+        if (scheduleEntries != null) {
+             data = new Object[scheduleEntries.size()][3];
+            for (int i = 0; i < scheduleEntries.size(); i++) {
+                if (scheduleEntries.get(i).getProgramName().compareTo("")
                         != 0) {
-                    data[i][0] = schedules.get(i).getProgramName();
-                    data[i][1] = schedules.get(i).getStartTime().getTime();
-                    data[i][2] = schedules.get(i).getEndTime().getTime();
+                    data[i][0] = scheduleEntries.get(i).getProgramName();
+                    data[i][1] = scheduleEntries.get(i).getStartTime().getTime();
+                    data[i][2] = scheduleEntries.get(i).getEndTime().getTime();
                 } else {
                     /*If there is no description add text explaining that
                         it's missing */
                     data[i][0] = "Ingen beskrivning tillgänglig";
-                    data[i][1] = schedules.get(i).getStartTime().getTime();
-                    data[i][2] = schedules.get(i).getEndTime().getTime();
+                    data[i][1] = scheduleEntries.get(i).getStartTime().getTime();
+                    data[i][2] = scheduleEntries.get(i).getEndTime().getTime();
                 }
             }
             JTable table = createTable(data, columnNames);

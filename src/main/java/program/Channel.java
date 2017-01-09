@@ -19,7 +19,7 @@ public class Channel {
     private String scheduleUrl;
     private String channelType;
 
-    private List<Schedule> schedule;
+    private List<ScheduleEntry> scheduleEntry;
 
     /**
      * A container for channel information is empty until defined
@@ -30,18 +30,18 @@ public class Channel {
 
     /**
      *
-     * @param schedule The channels schedule
+     * @param scheduleEntry The channels scheduleEntry
      */
-    public void setSchedule(List<Schedule> schedule) {
-        this.schedule = schedule;
+    public void setScheduleEntry(List<ScheduleEntry> scheduleEntry) {
+        this.scheduleEntry = scheduleEntry;
     }
 
     /**
      *
-     * @return schedule for the channel
+     * @return scheduleEntry for the channel
      */
-    public List<Schedule> getSchedule() {
-        return schedule;
+    public List<ScheduleEntry> getScheduleEntry() {
+        return scheduleEntry;
     }
 
     /**
@@ -190,7 +190,7 @@ public class Channel {
 
     /**
      *
-     * @return URL to the schedule
+     * @return URL to the scheduleEntry
      */
     public String getScheduleUrl() {
         return scheduleUrl;
@@ -198,7 +198,7 @@ public class Channel {
 
     /**
      *
-     * @param scheduleUrl set the schedule url
+     * @param scheduleUrl set the scheduleEntry url
      */
     public void setScheduleUrl(String scheduleUrl) {
         this.scheduleUrl = scheduleUrl;
@@ -238,7 +238,7 @@ public class Channel {
                 ",\n liveStartKey='" + liveStartKey + '\'' +
                 ",\n scheduleUrl='" + scheduleUrl + '\'' +
                 ",\n channelType='" + channelType + '\'' +
-                ",\n schedule=" + schedule +
+                ",\n scheduleEntry=" + scheduleEntry +
                 "}\n";
     }
 }
