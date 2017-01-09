@@ -52,7 +52,7 @@ public class TabBuilder {
                 } else {
                     /*If there is no description add text explaining that
                         it's missing */
-                    data[i][0] = "Ingen beskrivning tillgänglig";
+                    data[i][0] = "No description";
                     data[i][1] = scheduleEntries.get(i).getStartTime().getTime();
                     data[i][2] = scheduleEntries.get(i).getEndTime().getTime();
                 }
@@ -62,7 +62,7 @@ public class TabBuilder {
         } else { // No schedule available prints this on a label.
             JLabel noTableau = new JLabel("<html><div " +
                     "\"style=\"margin:30px\"> <h1 style=" +
-                    "\"text-align:center\">Ingen tablå tillgänglig</h1>" +
+                    "\"text-align:center\">No schedule available</h1>" +
                     "</div></html>");
             scrollPane = new JScrollPane(noTableau);
         }

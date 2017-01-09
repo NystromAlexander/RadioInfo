@@ -63,7 +63,7 @@ public class MenuBar {
      */
     private JMenu createP4Menu() {
         JMenu p4Menu = new JMenu("P4");
-        JMenuItem show = new JMenuItem("Visa tablå");
+        JMenuItem show = new JMenuItem("Show schedule");
         show.addActionListener(e -> {
             mainWindow.setCurrentView(CurrentView.P4);
             mainWindow.updateView();
@@ -78,7 +78,7 @@ public class MenuBar {
      */
     private JMenu createStartMenu() {
         JMenu start = new JMenu("Blandat");
-        JMenuItem show = new JMenuItem("Visa tablå");
+        JMenuItem show = new JMenuItem("Show schedule");
         show.addActionListener(e -> {
             mainWindow.setCurrentView(CurrentView.MAIN);
             mainWindow.updateView();
@@ -93,7 +93,7 @@ public class MenuBar {
      */
     private JMenu createSRExtraMenu() {
         JMenu SRExtra = new JMenu("SR Extra");
-        JMenuItem show = new JMenuItem("Visa tablå");
+        JMenuItem show = new JMenuItem("Show schedule");
         show.addActionListener(e -> {
             mainWindow.setCurrentView(CurrentView.SREXTRA);
             mainWindow.updateView();

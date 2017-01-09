@@ -17,14 +17,16 @@ public class Details {
     private JFrame window;
     private ScheduleEntry scheduleEntry;
     private URI channelURI;
+    private URI liveURI;
 
     /**
      * Create a Details window
      * @param scheduleEntry scheduleEntry for a channel
      * @param channelURI URI to the channels website
      */
-    public Details(ScheduleEntry scheduleEntry, URI channelURI) {
+    public Details(ScheduleEntry scheduleEntry, URI channelURI, URI liveURI) {
         this.channelURI = channelURI;
+        this.liveURI = liveURI;
         window = new JFrame("Ytterligare information");
         this.scheduleEntry = scheduleEntry;
         setupWindow();
@@ -33,9 +35,9 @@ public class Details {
     }
 
     /**
-     * Set up the window, get picture from the scheduleEntry and make a label with
-     * the given description and make a button looking like a link to open
-     * the website in a browser.
+     * Set up the window, get picture from the scheduleEntry and make a label
+     * with the given description and make a button looking like a link to open
+     * the website in a browser, also one for opening the radio in the browser.
      */
     private void setupWindow() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -70,6 +72,25 @@ public class Details {
                     "</div></html>");
         }
 
+        /*Create a button looking like a link that tries to open the live radio
+           in a browser*/
+        JButton listen = new JButton("<HTML><FONT color=\"#000099\"><U>" +
+                "Lysnna i webläsare</U></FONT></HTML>");
+        listen.addActionListener(e -> {
+            if (Desktop.isDesktopSupported()) {
+                try {
+                    Desktop.getDesktop().browse(liveURI);
+                } catch (IOException io) {
+                    JOptionPane.showMessageDialog(
+                            null,"Could not open "+
+                                    liveURI);
+                }
+            }
+        });
+        listen.setBorderPainted(false);
+        listen.setOpaque(false);
+        listen.setBackground(Color.WHITE);
+
         //Create a button looking like a link and that tries to open the website
         JButton webSite = new JButton("<HTML><FONT color=\"#000099\"><U>" +
                 "Gå till kannalens hemsida.</U></FONT></HTML>");
@@ -87,8 +108,9 @@ public class Details {
         webSite.setBorderPainted(false);
         webSite.setOpaque(false);
         webSite.setBackground(Color.WHITE);
-        innerPane.add(imageText,BorderLayout.NORTH);
-        innerPane.add(webSite,BorderLayout.CENTER);
+        innerPane.add(imageText, BorderLayout.NORTH);
+        innerPane.add(webSite, BorderLayout.SOUTH);
+        innerPane.add(listen, BorderLayout.CENTER);
         panel.add(innerPane, BorderLayout.CENTER);
         window.add(panel);
     }
