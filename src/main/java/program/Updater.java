@@ -18,17 +18,29 @@ public class Updater implements Runnable{
     private List<Channel> threadAccess;
     private List<Channel> finished;
 
+    /**
+     * Create a updater designed to update schedules for all channels
+     * and doing so with multiple threads
+     */
     public Updater() {
         threadAccess = Collections.synchronizedList(new ArrayList<Channel>());
         finished = Collections.synchronizedList(new ArrayList<Channel>());
         initialUpdate();
     }
 
+    /**
+     * The initial update parses all channels available so that it can parse
+     * the schedules when asked
+     */
     private void initialUpdate(){
         ChannelParser channelParser = new ChannelParser();
         channels = channelParser.parseChannelApi(channelAPI);
     }
 
+    /**
+     * Creates thread for each channel and sets it to parse the schedules
+     * @return list with tabbed panels with all the schedules
+     */
     public ArrayList<JTabbedPane> update() {
         finished.clear();
         threadAccess.addAll(channels);
@@ -37,20 +49,27 @@ public class Updater implements Runnable{
             threads[i] = new Thread(this);
             threads[i].start();
         }
-        for (int j = 0; j < threads.length; j++){
+        for (Thread thread : threads) {
             try {
-                threads[j].join();
+                thread.join();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "There were an internal error");
             }
         }
         return createPanels();
     }
 
+    /**
+     * Creates the tabbed panels for the different channel groups and
+     * add the finished panels to a list
+     * @return list with tabbed panels with channel schedules
+     */
     private ArrayList<JTabbedPane> createPanels(){
         TabBuilder start = new TabBuilder();
         TabBuilder srE = new TabBuilder();
         TabBuilder p4 = new TabBuilder();
+        //group the channels by name
         for (Channel channel: finished) {
             if (channel.getName().startsWith("P4")) {
                 p4.createTab(channel);
@@ -65,18 +84,26 @@ public class Updater implements Runnable{
         JTabbedPane srEPanel = srE.buildTabbs();
 
         ArrayList<JTabbedPane> panels = new ArrayList<>();
+        /*Important that they get added in this order for the main window
+            to know which is which */
         panels.add(startPanel);
         panels.add(p4Panel);
         panels.add(srEPanel);
         return panels;
     }
 
+    /**
+     * Gets a channel from the list of channels and parse the schedule for that
+     * channel and then add the completed channel to a list with finished
+     * channels
+     *
+     * Thread safe run method since it's only two lists all threads share and
+     * those lists are synchronized lists.
+     *
+     */
     public void run() {
         Channel channel = threadAccess.remove(0);
-//        threadAccess.remove(channel);
-        if (channel.getScheduleUrl().compareTo("" ) == 0) {
-//            System.out.println("No shedule: "+channel.getName());
-        } else {
+        if (channel.getScheduleUrl().compareTo("" ) != 0) {
             ScheduleParser scheduleParser = new ScheduleParser();
             List<ScheduleEntry> scheduleEntries =
                     scheduleParser.parseTableauApi(channel.getScheduleUrl());
