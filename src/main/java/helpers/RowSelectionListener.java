@@ -46,7 +46,8 @@ public class RowSelectionListener implements ListSelectionListener {
                         @Override
                         public void run() {
                             try {
-                                new Details(scheduleEntry,new URI(channel.getSiteUrl()));
+                                new Details(scheduleEntry,new URI(
+                                        channel.getSiteUrl()));
                             } catch (URISyntaxException e1) {
                                 JOptionPane.showMessageDialog(null,
                                         "There were an internal error");

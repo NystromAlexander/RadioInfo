@@ -82,6 +82,7 @@ public class ChannelParser {
         } catch (MalformedURLException | XPathExpressionException e) {
             JOptionPane.showMessageDialog(null,"There " +
                     "were an internal error");
+            System.exit(1);
         }
         return null;
     }

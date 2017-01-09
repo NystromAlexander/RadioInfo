@@ -63,6 +63,7 @@ public class ScheduleParser implements Runnable{
         } catch (InterruptedException | IOException e) {
             JOptionPane.showMessageDialog(null,"There " +
                     "were an internal error");
+            System.exit(1);
         }
         //Sorts the list by the start time
         scheduleEntries.sort(Comparator.comparing(ScheduleEntry::getStartTime));
@@ -82,8 +83,8 @@ public class ScheduleParser implements Runnable{
             Calendar rightNow = Calendar.getInstance();
             for (int i = 0; i < episodeCount; i++){
                 Calendar startTime = DatatypeConverter.parseDateTime(
-                        path.evaluate("/sr/schedule/scheduledepisode["+(i+1)+"]/" +
-                                "starttimeutc",doc));
+                        path.evaluate("/sr/schedule/scheduledepisode["
+                                +(i+1)+"]/starttimeutc",doc));
                 if (isWithinInterval(rightNow, startTime)) {
                     ScheduleEntry scheduleEntry = new ScheduleEntry();
                     String id = path.evaluate(
@@ -93,11 +94,12 @@ public class ScheduleParser implements Runnable{
                         scheduleEntry.setEpisodeId(Integer.parseInt(id));
                     }
 
-                    scheduleEntry.setTitle(path.evaluate("/sr/schedule/" +
-                            "scheduledepisode["+(i+1)+ "]/title", doc));
+                    scheduleEntry.setTitle(path.evaluate("/sr/" +
+                            "schedule/scheduledepisode["+(i+1)+ "]/title",
+                            doc));
 
-                    scheduleEntry.setSubTitle(path.evaluate("/sr/schedule/" +
-                                    "scheduledepisode["+(i+1)+"]" +
+                    scheduleEntry.setSubTitle(path.evaluate("/sr/" +
+                            "schedule/scheduledepisode["+(i+1)+"]" +
                             "/subtitle", doc));
 
                     scheduleEntry.setDescription(path.evaluate(
@@ -139,7 +141,9 @@ public class ScheduleParser implements Runnable{
                 }
             }
         } catch (XPathExpressionException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,"There " +
+                    "were an internal error");
+
         }
     }
 
@@ -240,10 +244,9 @@ public class ScheduleParser implements Runnable{
             if (url.compareTo("") != 0){
                 return new URL(url);
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();
+        } catch (MalformedURLException | XPathExpressionException e) {
+            JOptionPane.showMessageDialog(null,"There " +
+                    "were an internal error");
         }
         return null;
     }
