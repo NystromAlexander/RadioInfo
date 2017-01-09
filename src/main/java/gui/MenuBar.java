@@ -56,7 +56,11 @@ public class MenuBar {
         exit.addActionListener(e -> System.exit(0));
         return exit;
     }
-//TODO Comment from here
+
+    /**
+     * Create the menu to switch to the p4 schedule
+     * @return finished p4 menu
+     */
     private JMenu createP4Menu() {
         JMenu p4Menu = new JMenu("P4");
         JMenuItem show = new JMenuItem("Visa tablå");
@@ -68,6 +72,10 @@ public class MenuBar {
         return p4Menu;
     }
 
+    /**
+     * Create menu to switch to the mixed schedule also the start page
+     * @return the finished mixed menu
+     */
     private JMenu createStartMenu() {
         JMenu start = new JMenu("Blandat");
         JMenuItem show = new JMenuItem("Visa tablå");
@@ -79,6 +87,10 @@ public class MenuBar {
         return start;
     }
 
+    /**
+     * Create the menu to switch to the schedules for SR Extra channels
+     * @return the finished menu
+     */
     private JMenu createSRExtraMenu() {
         JMenu SRExtra = new JMenu("SR Extra");
         JMenuItem show = new JMenuItem("Visa tablå");
@@ -90,6 +102,10 @@ public class MenuBar {
         return SRExtra;
     }
 
+    /**
+     *
+     * @return the menu bar
+     */
     public JMenuBar getMenuBar() {
         return menuBar;
     }

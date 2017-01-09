@@ -195,15 +195,16 @@ public class MainWindow {
         /*Create a swing worker to do the hard job while the gui
              can remain active*/
         SwingWorker aWorker = new SwingWorker() {
+            ArrayList<JTabbedPane> panes;
             public Object doInBackground() {
-                ArrayList<JTabbedPane> panes = updater.update();
-                setStartPanel(panes.get(START));
-                setP4Panel(panes.get(P4IND));
-                setSrExtraPanel(panes.get(SRE));
+                panes = updater.update();
                 return null;
             }
 
             public void done() {
+                setStartPanel(panes.get(START));
+                setP4Panel(panes.get(P4IND));
+                setSrExtraPanel(panes.get(SRE));
                 updateView();
             }
         };

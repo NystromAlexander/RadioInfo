@@ -19,6 +19,9 @@ public class Tableau {
     private String imgUrl;
     private String imgUrlTemplate;
 
+    /**
+     * This is just a container for schedule information
+     */
     public Tableau() {
 
     }

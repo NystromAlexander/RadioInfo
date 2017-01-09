@@ -74,7 +74,6 @@ public class Details {
         JButton webSite = new JButton("<HTML><FONT color=\"#000099\"><U>" +
                 "Gå till kannalens hemsida.</U></FONT></HTML>");
         webSite.addActionListener(e -> {
-
             if (Desktop.isDesktopSupported()) {
                 try {
                     Desktop.getDesktop().browse(channelURI);
@@ -84,6 +83,7 @@ public class Details {
                 }
             }
          });
+
         webSite.setBorderPainted(false);
         webSite.setOpaque(false);
         webSite.setBackground(Color.WHITE);

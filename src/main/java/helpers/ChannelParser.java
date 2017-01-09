@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import program.Channel;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -42,6 +43,7 @@ public class ChannelParser {
      * channels found
      * @param apiUrl url to the channel api
      * @return List with all channels that was parsed
+     * @see Channel
      */
     public ArrayList<Channel> parseChannelApi(String apiUrl) {
         ArrayList<Channel> channels = new ArrayList<>();
@@ -58,12 +60,9 @@ public class ChannelParser {
                 doc = parser.parse(url.openStream());
                 buildChannels(channels,doc);
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
+        } catch (IOException | SAXException e) {
+            JOptionPane.showMessageDialog(null,"There " +
+                    "were an internal error");
         }
 
         return channels;
@@ -80,10 +79,9 @@ public class ChannelParser {
             if (url.compareTo("") != 0){
                 return new URL(url);
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();
+        } catch (MalformedURLException | XPathExpressionException e) {
+            JOptionPane.showMessageDialog(null,"There " +
+                    "were an internal error");
         }
         return null;
     }
@@ -94,7 +92,8 @@ public class ChannelParser {
      * @param doc the parsed document
      * @return list with channels
      */
-    private ArrayList<Channel> buildChannels(ArrayList<Channel> channels, Document doc) {
+    private ArrayList<Channel> buildChannels(ArrayList<Channel> channels,
+                                             Document doc) {
 
         try {
             int channelCount = Integer.parseInt(path.evaluate(
@@ -138,7 +137,8 @@ public class ChannelParser {
                 channels.add(channel);
             }
         } catch (XPathExpressionException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,"There " +
+                    "were an internal error");
         }
         return channels;
     }

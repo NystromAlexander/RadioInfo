@@ -49,6 +49,8 @@ public class TabBuilder {
                     data[i][1] = tableaus.get(i).getStartTime().getTime();
                     data[i][2] = tableaus.get(i).getEndTime().getTime();
                 } else {
+                    /*If there is no description add text explaining that
+                        it's missing */
                     data[i][0] = "Ingen beskrivning tillgänglig";
                     data[i][1] = tableaus.get(i).getStartTime().getTime();
                     data[i][2] = tableaus.get(i).getEndTime().getTime();
@@ -56,7 +58,7 @@ public class TabBuilder {
             }
             JTable table = createTable(data, columnNames);
             scrollPane = new JScrollPane(table);
-        } else {
+        } else { // No schedule available prints this on a label.
             JLabel noTableau = new JLabel("<html><div " +
                     "\"style=\"margin:30px\"> <h1 style=" +
                     "\"text-align:center\">Ingen tablå tillgänglig</h1>" +
@@ -74,7 +76,7 @@ public class TabBuilder {
      * Also adds a listener for row clicks so that a user can click a row
      * and it will open a window with details.
      * If a shows end time has passed
-     * the current time rows color will be set to grey
+     * the current time the rows color will be set to grey
      * @param data the date to be put into the table
      * @param columnNames name of the columns
      * @return the finished table.
@@ -82,17 +84,18 @@ public class TabBuilder {
      */
     private JTable createTable(Object[][] data, String[] columnNames) {
         JTable table = new JTable();
+        //Make the cells of the table not editable
         DefaultTableModel tableModel =
                 new DefaultTableModel(data,columnNames) {
                     @Override
                     public boolean isCellEditable(int row, int column) {
-                        //all cells false
                         return false;
                     }
                 };
 
         table.setModel(tableModel);
         table.setFillsViewportHeight(true);
+        //Makes all rows containing a show that has already been to be grey
         table.setDefaultRenderer(Object.class,
                 new DefaultTableCellRenderer() {
                     @Override
@@ -126,7 +129,8 @@ public class TabBuilder {
     }
 
     /**
-     * Will create all the tabs and add them to the main window.
+     * Creates all the tabs and
+     * @return panel with all tabs containing schedules
      */
     public JTabbedPane buildTabbs() {
         JTabbedPane tabs = new JTabbedPane();

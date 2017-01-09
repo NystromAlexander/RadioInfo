@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import program.Tableau;
 
+import javax.swing.*;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,24 +27,25 @@ public class TableauParser implements Runnable{
 
     private List<URL> urls;
     private List<Tableau> tableaus;
-    private List<Document> documents;
 
+    /**
+     * Parser to parse and create tableau's for radio channels
+     */
     public TableauParser() {
         tableaus = Collections.synchronizedList(new ArrayList<Tableau>());
         urls = Collections.synchronizedList(new ArrayList<URL>());
-        documents = Collections.synchronizedList(new ArrayList<Document>());
     }
 
     /**
-     * Takes the given api url and will parse the xml returned and create a
-     * channel object for each parsed channel, then return a list with all
-     * channels found
-     * @param apiUrl url to the channel api
-     * @return List with all channels that was parsed
+     * Takes the given api url and gets the url for yesterday and tomorrow
+     * and then parses the pages of the xml's with one thread for each day.
+     * @param apiUrl url to the schedule api
+     * @return List with all tableau's that was parsed
      */
     public List<Tableau> parseTableauApi(String apiUrl) {
 
         try {
+            //Create the urls for yesterday, today and tomorrow
             URL yesterday = new URL(apiUrl + getYesterday());
             URL tomorrow = new URL(apiUrl + getTomorrow());
             urls.add(yesterday);
@@ -60,27 +62,23 @@ public class TableauParser implements Runnable{
                 threads[i].join();
             }
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }catch (IOException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | IOException e) {
+            JOptionPane.showMessageDialog(null,"There " +
+                    "were an internal error");
         }
+        //Sorts the list by the start time
         tableaus.sort(Comparator.comparing(Tableau::getStartTime));
         return tableaus;
     }
 
-
-        /**
+     /**
      * Create a channel object for each channel found in the parsed document
+      * and adds it to a list of tableau's
      * @param path path to traverse the parsed tree
      * @param doc the parsed document
-     * @return list with channels
      */
     private void buildTableau(XPath path, Document doc) {
         try {
-//            System.out.println("building");
             int episodeCount = Integer.parseInt(path.evaluate(
                     "count(/sr/schedule/scheduledepisode)", doc));
             Calendar rightNow = Calendar.getInstance();
@@ -148,7 +146,8 @@ public class TableauParser implements Runnable{
     }
 
     /**
-     * Will parse each page for each url
+     * Will parse each page for each url it's thread safe since they only share
+     * list with urls which is synchronized
      */
     public void run() {
         DocumentBuilder parser;
@@ -168,18 +167,15 @@ public class TableauParser implements Runnable{
                 buildTableau(path, doc);
             }
         }
-        catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        catch (ParserConfigurationException | IOException | SAXException e) {
+            JOptionPane.showMessageDialog(null,"There " +
+                    "were an internal error");
         }
     }
 
     /**
      * Checks if the given time is within a 24h interval of current time.
-     * That is if compareTo is 12h behind or before current time
+     * That is if startTime is 12h behind or before current time
      * @param rightNow current time
      * @param startTime time to compare to
      * @return true if the time is withing the interval
@@ -193,7 +189,7 @@ public class TableauParser implements Runnable{
     /**
      *
      * @return formatted string to attach to the url to on the format
-     *          &date=YYYY-MM-DD
+     *          &date=YYYY-MM-DD with the date from yesterday
      */
     private String getYesterday() {
         Calendar yesterday = Calendar.getInstance();
@@ -214,8 +210,8 @@ public class TableauParser implements Runnable{
 
     /**
      *
-     * @return formatted string to attach to the url to on the format
-     *          &date=YYYY-MM-DD
+     * @return formatted string to attach to the url with the format
+     *          &date=YYYY-MM-DD for the date tomorrow
      */
     private String getTomorrow(){
         Calendar tomorrow = Calendar.getInstance();
@@ -236,7 +232,7 @@ public class TableauParser implements Runnable{
 
     /**
      * Gets the next page from the parsed document
-     * @param path path to treverse the tree
+     * @param path path to traverse the tree
      * @param doc the document with the parsed xml
      * @return the url to the next xml page
      */

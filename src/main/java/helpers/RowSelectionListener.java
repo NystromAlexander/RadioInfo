@@ -19,11 +19,21 @@ public class RowSelectionListener implements ListSelectionListener {
     private Channel channel;
     private JTable table;
 
-    public RowSelectionListener(Channel channels, JTable table) {
-        this.channel = channels;
+    /**
+     * Listener for user clicking a row in a table
+     * @param channel the channel the table belongs to
+     * @param table the table containing the data
+     */
+    public RowSelectionListener(Channel channel, JTable table) {
+        this.channel = channel;
         this.table = table;
     }
 
+    /**
+     * If a row is clicked a new window will be opened with more information
+     * about the program on that row
+     * @param e event that triggered the method
+     */
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
@@ -31,11 +41,18 @@ public class RowSelectionListener implements ListSelectionListener {
                     1);
             for (Tableau tableau: channel.getTableau()) {
                 if (tableau.getStartTime().getTime().equals(startTid)) {
-                    try {
-                        new Details(tableau,new URI(channel.getSiteUrl()));
-                    } catch (URISyntaxException e1) {
-                        e1.printStackTrace();
-                    }
+
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                new Details(tableau,new URI(channel.getSiteUrl()));
+                            } catch (URISyntaxException e1) {
+                                JOptionPane.showMessageDialog(null,
+                                        "There were an internal error");
+                            }
+                        }
+                    });
                 }
             }
         }
