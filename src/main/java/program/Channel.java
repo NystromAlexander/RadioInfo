@@ -19,7 +19,7 @@ public class Channel {
     private String scheduleUrl;
     private String channelType;
 
-    private List<Tableau> tableau;
+    private List<Schedule> schedule;
 
     /**
      * A container for channel information is empty until defined
@@ -30,18 +30,18 @@ public class Channel {
 
     /**
      *
-     * @param tableau The channels schedule
+     * @param schedule The channels schedule
      */
-    public void setTableau(List<Tableau> tableau) {
-        this.tableau = tableau;
+    public void setSchedule(List<Schedule> schedule) {
+        this.schedule = schedule;
     }
 
     /**
      *
      * @return schedule for the channel
      */
-    public List<Tableau> getTableau() {
-        return tableau;
+    public List<Schedule> getSchedule() {
+        return schedule;
     }
 
     /**
@@ -238,7 +238,7 @@ public class Channel {
                 ",\n liveStartKey='" + liveStartKey + '\'' +
                 ",\n scheduleUrl='" + scheduleUrl + '\'' +
                 ",\n channelType='" + channelType + '\'' +
-                ",\n tableau=" + tableau +
+                ",\n schedule=" + schedule +
                 "}\n";
     }
 }

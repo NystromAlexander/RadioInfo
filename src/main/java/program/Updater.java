@@ -2,7 +2,7 @@ package program;
 
 import gui.TabBuilder;
 import helpers.ChannelParser;
-import helpers.TableauParser;
+import helpers.ScheduleParser;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -77,10 +77,10 @@ public class Updater implements Runnable{
         if (channel.getScheduleUrl().compareTo("" ) == 0) {
 //            System.out.println("No shedule: "+channel.getName());
         } else {
-            TableauParser tableauParser = new TableauParser();
-            List<Tableau> tableaus =
-                    tableauParser.parseTableauApi(channel.getScheduleUrl());
-            channel.setTableau(tableaus);
+            ScheduleParser scheduleParser = new ScheduleParser();
+            List<Schedule> schedules =
+                    scheduleParser.parseTableauApi(channel.getScheduleUrl());
+            channel.setSchedule(schedules);
         }
 
         finished.add(channel);

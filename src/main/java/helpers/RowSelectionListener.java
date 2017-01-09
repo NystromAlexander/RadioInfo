@@ -2,7 +2,7 @@ package helpers;
 
 import gui.Details;
 import program.Channel;
-import program.Tableau;
+import program.Schedule;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -39,14 +39,14 @@ public class RowSelectionListener implements ListSelectionListener {
         if (!e.getValueIsAdjusting()) {
             Date startTid = (Date) table.getValueAt(table.getSelectedRow(),
                     1);
-            for (Tableau tableau: channel.getTableau()) {
-                if (tableau.getStartTime().getTime().equals(startTid)) {
+            for (Schedule schedule : channel.getSchedule()) {
+                if (schedule.getStartTime().getTime().equals(startTid)) {
 
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                new Details(tableau,new URI(channel.getSiteUrl()));
+                                new Details(schedule,new URI(channel.getSiteUrl()));
                             } catch (URISyntaxException e1) {
                                 JOptionPane.showMessageDialog(null,
                                         "There were an internal error");

@@ -2,7 +2,7 @@ package helpers;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import program.Tableau;
+import program.Schedule;
 
 import javax.swing.*;
 import javax.xml.bind.DatatypeConverter;
@@ -13,26 +13,24 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Alexander Nyström(dv15anm) on 20/12/2016.
  */
-public class TableauParser implements Runnable{
+public class ScheduleParser implements Runnable{
 
     private List<URL> urls;
-    private List<Tableau> tableaus;
+    private List<Schedule> schedules;
 
     /**
-     * Parser to parse and create tableau's for radio channels
+     * Parser to parse and create schedules for radio channels
      */
-    public TableauParser() {
-        tableaus = Collections.synchronizedList(new ArrayList<Tableau>());
+    public ScheduleParser() {
+        schedules = Collections.synchronizedList(new ArrayList<Schedule>());
         urls = Collections.synchronizedList(new ArrayList<URL>());
     }
 
@@ -42,7 +40,7 @@ public class TableauParser implements Runnable{
      * @param apiUrl url to the schedule api
      * @return List with all tableau's that was parsed
      */
-    public List<Tableau> parseTableauApi(String apiUrl) {
+    public List<Schedule> parseTableauApi(String apiUrl) {
 
         try {
             //Create the urls for yesterday, today and tomorrow
@@ -67,8 +65,8 @@ public class TableauParser implements Runnable{
                     "were an internal error");
         }
         //Sorts the list by the start time
-        tableaus.sort(Comparator.comparing(Tableau::getStartTime));
-        return tableaus;
+        schedules.sort(Comparator.comparing(Schedule::getStartTime));
+        return schedules;
     }
 
      /**
@@ -87,57 +85,57 @@ public class TableauParser implements Runnable{
                         path.evaluate("/sr/schedule/scheduledepisode["+(i+1)+"]/" +
                                 "starttimeutc",doc));
                 if (isWithinInterval(rightNow, startTime)) {
-                    Tableau tableau = new Tableau();
+                    Schedule schedule = new Schedule();
                     String id = path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                                     "]/episodeid", doc);
                     if (id.compareTo("") != 0) {
-                        tableau.setEpisodeId(Integer.parseInt(id));
+                        schedule.setEpisodeId(Integer.parseInt(id));
                     }
 
-                    tableau.setTitle(path.evaluate("/sr/schedule/" +
+                    schedule.setTitle(path.evaluate("/sr/schedule/" +
                             "scheduledepisode["+(i+1)+ "]/title", doc));
 
-                    tableau.setSubTitle(path.evaluate("/sr/schedule/" +
+                    schedule.setSubTitle(path.evaluate("/sr/schedule/" +
                                     "scheduledepisode["+(i+1)+"]" +
                             "/subtitle", doc));
 
-                    tableau.setDescription(path.evaluate(
+                    schedule.setDescription(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                                     "]/description", doc));
 
-                    tableau.setStartTime(startTime);
+                    schedule.setStartTime(startTime);
 
-                    tableau.setEndTime(DatatypeConverter.parseDateTime(
+                    schedule.setEndTime(DatatypeConverter.parseDateTime(
                             path.evaluate("/sr/schedule/" +
                                     "scheduledepisode["+(i+1)+"]/" +
                                     "endtimeutc", doc)));
 
-                    tableau.setProgramId(Integer.parseInt(path.evaluate(
+                    schedule.setProgramId(Integer.parseInt(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/program/@id", doc)));
 
-                    tableau.setProgramName(path.evaluate(
+                    schedule.setProgramName(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/program/@name", doc));
 
-                    tableau.setChannelId(Integer.parseInt(path.evaluate(
+                    schedule.setChannelId(Integer.parseInt(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/channel/@id", doc)));
 
-                    tableau.setChannelName(path.evaluate(
+                    schedule.setChannelName(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/channel/@name", doc));
 
-                    tableau.setImgUrl(path.evaluate(
+                    schedule.setImgUrl(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/imageurl", doc));
 
-                    tableau.setImgUrlTemplate(path.evaluate(
+                    schedule.setImgUrlTemplate(path.evaluate(
                             "/sr/schedule/scheduledepisode["+(i+1)+
                             "]/imageurltemplate", doc));
 
-                    tableaus.add(tableau);
+                    schedules.add(schedule);
                 }
             }
         } catch (XPathExpressionException e) {

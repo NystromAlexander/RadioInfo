@@ -5,7 +5,7 @@ import java.util.Calendar;
 /**
  * Created by Alexander Nyström(dv15anm) on 20/12/2016.
  */
-public class Tableau {
+public class Schedule {
     private int episodeId;
     private String title;
     private String subTitle;
@@ -22,7 +22,7 @@ public class Tableau {
     /**
      * This is just a container for schedule information
      */
-    public Tableau() {
+    public Schedule() {
 
     }
 
@@ -124,7 +124,7 @@ public class Tableau {
 
     @Override
     public String toString() {
-        return "Tableau{" +
+        return "Schedule{" +
                 "episodeId=" + episodeId +
                 ",\n title='" + title + '\'' +
                 ",\n subTitle='" + subTitle + '\'' +
