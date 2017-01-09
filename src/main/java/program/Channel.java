@@ -1,3 +1,12 @@
+/*
+* Channel - class for storing information about radio channels
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
 package program;
 
 import java.util.List;

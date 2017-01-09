@@ -1,3 +1,14 @@
+/*
+* ChannelParser - class to parse xml containing information about
+*                 radio channels
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
+
 package helpers;
 
 import org.w3c.dom.Document;

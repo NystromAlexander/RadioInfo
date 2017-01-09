@@ -1,3 +1,12 @@
+/*
+* MenuBar - creates a menu bar specific to RadioInfo
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
 package gui;
 
 import helpers.CurrentView;

@@ -1,3 +1,12 @@
+/*
+* CurrentView - enum explaining which view is active in MainWindow
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
 package helpers;
 
 /**

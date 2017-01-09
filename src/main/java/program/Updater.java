@@ -1,3 +1,12 @@
+/*
+* Updater - class for updating the schedules
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
 package program;
 
 import gui.TabBuilder;

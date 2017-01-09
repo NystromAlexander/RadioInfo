@@ -1,3 +1,13 @@
+/*
+* RowSelectionListener - class for listening after interaction to rows
+*                        in a table
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
 package helpers;
 
 import gui.Details;

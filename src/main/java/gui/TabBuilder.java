@@ -1,3 +1,12 @@
+/*
+* TabBuilder - a class to build tabs containing schedules
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
 package gui;
 
 import helpers.RowSelectionListener;

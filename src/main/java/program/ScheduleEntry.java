@@ -1,3 +1,12 @@
+/*
+* ScheduleEntry - class for storing information about a schedule entry
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
 package program;
 
 import java.util.Calendar;

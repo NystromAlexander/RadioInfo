@@ -1,3 +1,13 @@
+/*
+* ScheduleParser - class for parsing xml containing schedule information
+*                  for radio channels
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
 package helpers;
 
 import org.w3c.dom.Document;

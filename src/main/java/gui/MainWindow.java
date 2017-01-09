@@ -1,3 +1,13 @@
+/*
+* MainWindow - this is the main window for the program
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
+
 package gui;
 
 import helpers.CurrentView;

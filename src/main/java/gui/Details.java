@@ -1,3 +1,12 @@
+/*
+* Details - class for showing details for a radio program
+*
+* Version: 1.0
+*
+* Created by: Alexander Nyström
+*
+*/
+
 package gui;
 
 import program.ScheduleEntry;
@@ -75,7 +84,7 @@ public class Details {
         /*Create a button looking like a link that tries to open the live radio
            in a browser*/
         JButton listen = new JButton("<HTML><FONT color=\"#000099\"><U>" +
-                "Lysnna i webläsare</U></FONT></HTML>");
+                "Listen in a web browser</U></FONT></HTML>");
         listen.addActionListener(e -> {
             if (Desktop.isDesktopSupported()) {
                 try {
@@ -93,7 +102,7 @@ public class Details {
 
         //Create a button looking like a link and that tries to open the website
         JButton webSite = new JButton("<HTML><FONT color=\"#000099\"><U>" +
-                "Gå till kannalens hemsida.</U></FONT></HTML>");
+                "Open the website.</U></FONT></HTML>");
         webSite.addActionListener(e -> {
             if (Desktop.isDesktopSupported()) {
                 try {
