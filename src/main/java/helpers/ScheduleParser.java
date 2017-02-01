@@ -50,7 +50,7 @@ public class ScheduleParser implements Runnable{
      * @param apiUrl url to the schedule api
      * @return List with all tableau's that was parsed
      */
-    public List<ScheduleEntry> parseTableauApi(String apiUrl) {
+    public List<ScheduleEntry> parseScheduleApi(String apiUrl) {
 
         try {
             //Create the urls for yesterday, today and tomorrow

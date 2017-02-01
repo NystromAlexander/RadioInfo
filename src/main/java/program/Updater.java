@@ -115,7 +115,7 @@ public class Updater implements Runnable{
         if (channel.getScheduleUrl().compareTo("" ) != 0) {
             ScheduleParser scheduleParser = new ScheduleParser();
             List<ScheduleEntry> scheduleEntries =
-                    scheduleParser.parseTableauApi(channel.getScheduleUrl());
+                    scheduleParser.parseScheduleApi(channel.getScheduleUrl());
             channel.setScheduleEntry(scheduleEntries);
         }
 

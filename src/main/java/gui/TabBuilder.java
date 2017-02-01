@@ -26,7 +26,6 @@ import java.util.List;
 public class TabBuilder {
 
     private final int STARTTIME_COL = 2;
-    private JPanel mainFrame;
     private ArrayList<JScrollPane> panels;
     private ArrayList<String> names;
     private Channel channel;
@@ -37,7 +36,6 @@ public class TabBuilder {
     public TabBuilder() {
         panels = new ArrayList<>();
         names = new ArrayList<>();
-        mainFrame = new JPanel();
     }
 
     /**

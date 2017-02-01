@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class ChannelParser {
     private DocumentBuilder parser;
     private XPath path;
-    private String find;
+
     public ChannelParser() {
 
         DocumentBuilderFactory dbfactory =
@@ -42,7 +42,9 @@ public class ChannelParser {
         try {
             parser = dbfactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,"There " +
+                    "were an internal error");
+            System.exit(1);
         }
         XPathFactory xpfactory = XPathFactory.newInstance();
         path = xpfactory.newXPath();
@@ -63,11 +65,9 @@ public class ChannelParser {
         try {
             URL url = new URL(apiUrl);
             InputStream input = url.openStream();
-            find = url.toString();
             doc = parser.parse(input);
             buildChannels(channels,doc);
             while ((url = getNextPage(doc)) != null) {
-                find = url.toString();
                 doc = parser.parse(url.openStream());
                 buildChannels(channels,doc);
             }
