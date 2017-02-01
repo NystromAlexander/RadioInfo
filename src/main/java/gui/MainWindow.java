@@ -50,6 +50,7 @@ public class MainWindow {
         mainFrame.add(updateTime,BorderLayout.SOUTH);
         updater = new Updater();
         runUpdate = Executors.newSingleThreadScheduledExecutor();
+
         setUpGUI();
     }
 
@@ -96,7 +97,7 @@ public class MainWindow {
      * Sets the panel with schedules for P4
      * @param p4Panel panel with schedule for p4
      */
-    public void setP4Panel(JTabbedPane p4Panel) {
+    public synchronized void setP4Panel(JTabbedPane p4Panel) {
         this.p4Panel = p4Panel;
     }
 
@@ -104,7 +105,7 @@ public class MainWindow {
      * Sets the panel with schedule for SR Extra channels
      * @param srExtraPanel panel with schedule for SR Extra channels
      */
-    public void setSrExtraPanel(JTabbedPane srExtraPanel) {
+    public synchronized void setSrExtraPanel(JTabbedPane srExtraPanel) {
         this.srExtraPanel = srExtraPanel;
     }
 
@@ -112,7 +113,7 @@ public class MainWindow {
      * Set the panel with mixed channels
      * @param startPanel panel with schedule for mixed channels
      */
-    public void setStartPanel(JTabbedPane startPanel) {
+    public synchronized void setStartPanel(JTabbedPane startPanel) {
         this.startPanel = startPanel;
     }
 
@@ -129,7 +130,7 @@ public class MainWindow {
      * the time for the last update
      * @param updateTime string saying when the schedules were last updated
      */
-    public void setUpdateTime(String updateTime) {
+    public synchronized void setUpdateTime(String updateTime) {
         this.updateTime.setText(updateTime);
     }
 
@@ -156,7 +157,7 @@ public class MainWindow {
     /**
      * updates the view depending on what currentView is set to
      */
-    public void updateView() {
+    public synchronized void updateView() {
         switch (currentView) {
             case MAIN:
                 mainFrame.remove(currentPanel);
@@ -189,8 +190,8 @@ public class MainWindow {
                 mainFrame.pack();
                 mainFrame.revalidate();
                 mainFrame.repaint();
-                mainFrame.setCursor(Cursor.getPredefinedCursor(
-                        Cursor.DEFAULT_CURSOR));
+//                mainFrame.setCursor(Cursor.getPredefinedCursor(
+//                        Cursor.DEFAULT_CURSOR));
                 break;
         }
     }
@@ -202,11 +203,27 @@ public class MainWindow {
         //Set the time and date for the update
         updateTime.setText("Senast updaterad: "+Calendar.getInstance().
                 getTime().toString());
-        ArrayList<JTabbedPane> panes;
-        panes = updater.update();
-        setStartPanel(panes.get(START));
-        setP4Panel(panes.get(P4IND));
-        setSrExtraPanel(panes.get(SRE));
-        updateView();
+        mainFrame.setCursor(Cursor.getPredefinedCursor(
+                Cursor.WAIT_CURSOR));
+        SwingWorker aWorker = new SwingWorker() {
+            ArrayList<JTabbedPane> panes;
+
+            public Object doInBackground() {
+                //Set a new time stamp for last updated
+                panes = updater.update();
+                return null;
+            }
+
+            public void done() {
+                setStartPanel(panes.get(START));
+                setP4Panel(panes.get(P4IND));
+                setSrExtraPanel(panes.get(SRE));
+                updateView();
+            }
+        };
+        aWorker.run();
+        mainFrame.setCursor(Cursor.getPredefinedCursor(
+                Cursor.DEFAULT_CURSOR));
+
     }
 }

@@ -34,7 +34,6 @@ public class Updater implements Runnable{
     public Updater() {
         threadAccess = Collections.synchronizedList(new ArrayList<Channel>());
         finished = Collections.synchronizedList(new ArrayList<Channel>());
-        initialUpdate();
     }
 
     /**
@@ -51,6 +50,9 @@ public class Updater implements Runnable{
      * @return list with tabbed panels with all the schedules
      */
     public ArrayList<JTabbedPane> update() {
+        if (channels == null) {
+            initialUpdate();
+        }
         finished.clear();
         threadAccess.addAll(channels);
         Thread[] threads = new Thread[channels.size()];

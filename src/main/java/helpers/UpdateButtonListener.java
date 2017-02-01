@@ -26,6 +26,7 @@ public class UpdateButtonListener implements ActionListener {
 
     private Updater updater;
     private MainWindow mainWindow;
+    private SwingWorker aWorker;
 
     /**
      * Creates a button listener that will update the schedules when pressed
@@ -34,6 +35,7 @@ public class UpdateButtonListener implements ActionListener {
     public UpdateButtonListener(MainWindow mainWindow) {
         updater = new Updater();
         this.mainWindow = mainWindow;
+
     }
 
     /**
@@ -42,16 +44,15 @@ public class UpdateButtonListener implements ActionListener {
      * @param e the event that triggered the method
      */
     public void actionPerformed(ActionEvent e) {
-        SwingWorker aWorker = new SwingWorker() {
+        //Set a new time stamp for last updated
+        mainWindow.setUpdateTime("Senast updaterad: "+
+                Calendar.getInstance().getTime().toString());
+        mainWindow.getMainFrame().setCursor(Cursor.getPredefinedCursor(
+                Cursor.WAIT_CURSOR));
+        aWorker = new SwingWorker() {
             ArrayList<JTabbedPane> panes;
             public Object doInBackground() {
-                //Set a new time stamp for last updated
-                mainWindow.setUpdateTime("Senast updaterad: "+
-                        Calendar.getInstance().getTime().toString());
-                mainWindow.getMainFrame().setCursor(Cursor.getPredefinedCursor(
-                        Cursor.WAIT_CURSOR));
                 panes = updater.update();
-
                 return null;
             }
 
@@ -64,6 +65,6 @@ public class UpdateButtonListener implements ActionListener {
                         Cursor.DEFAULT_CURSOR));
             }
         };
-        aWorker.run();
+        aWorker.execute();
 }
 }
