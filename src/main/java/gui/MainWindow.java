@@ -190,8 +190,6 @@ public class MainWindow {
                 mainFrame.pack();
                 mainFrame.revalidate();
                 mainFrame.repaint();
-//                mainFrame.setCursor(Cursor.getPredefinedCursor(
-//                        Cursor.DEFAULT_CURSOR));
                 break;
         }
     }
@@ -209,7 +207,6 @@ public class MainWindow {
             ArrayList<JTabbedPane> panes;
 
             public Object doInBackground() {
-                //Set a new time stamp for last updated
                 panes = updater.update();
                 return null;
             }

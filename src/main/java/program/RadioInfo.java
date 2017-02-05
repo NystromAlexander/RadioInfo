@@ -20,11 +20,6 @@ public class RadioInfo {
 
     public static void main(String[] args ){
         MainWindow window = new MainWindow();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                window.setUpGUI();
-            }
-        });
+        SwingUtilities.invokeLater(() -> window.setUpGUI());
     }
 }
